@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0b10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AI 学习站">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>AI 学习站 · 路线 / 热词 / 模型图谱</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v3M12 18v3M4.2 7.5l2.6 1.5M17.2 15l2.6 1.5M4.2 16.5l2.6-1.5M17.2 9l2.6-1.5"></path>
+          <circle cx="12" cy="12" r="3.4"></circle>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <strong>AI 学习站</strong>
+        <span id="syncStatus" class="sync-status">正在检查同步…</span>
+      </span>
+    </div>
+    <button id="themeToggle" class="icon-btn" type="button" aria-label="切换深色模式" title="切换深色模式">🌙</button>
+  </div>
+
+  <nav class="tabs-desktop" role="tablist" aria-label="主导航">
+    <button class="tab" type="button" role="tab" data-tab="roadmap" aria-controls="view-roadmap" aria-selected="true">学习路线</button>
+    <button class="tab" type="button" role="tab" data-tab="glossary" aria-controls="view-glossary" aria-selected="false">热词百科</button>
+    <button class="tab" type="button" role="tab" data-tab="graph" aria-controls="view-graph" aria-selected="false">模型图谱</button>
+    <button class="tab" type="button" role="tab" data-tab="log" aria-controls="view-log" aria-selected="false">学习日志</button>
+    <button class="tab" type="button" role="tab" data-tab="stats" aria-controls="view-stats" aria-selected="false">统计</button>
+    <button class="tab" type="button" role="tab" data-tab="settings" aria-controls="view-settings" aria-selected="false">设置</button>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <!-- ==================== 学习路线 ==================== -->
+  <section id="view-roadmap" class="view" role="tabpanel">
+    <div class="hero">
+      <div class="hero-ring">
+        <svg viewBox="0 0 120 120" role="img" aria-labelledby="ringLabel">
+          <title id="ringLabel">总体完成度</title>
+          <circle class="ring-track" cx="60" cy="60" r="52"></circle>
+          <circle id="ringValue" class="ring-value" cx="60" cy="60" r="52"></circle>
+        </svg>
+        <div class="hero-ring-label">
+          <strong id="heroPercent">0%</strong>
+          <span id="heroCount">0 / 0</span>
+        </div>
+      </div>
+      <div class="hero-info">
+        <p class="hero-kicker" id="heroKicker">开始你的第一个任务</p>
+        <p class="hero-next" id="heroNext">加载中…</p>
+        <p class="hero-meta" id="heroMeta"></p>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="segmented" role="group" aria-label="筛选任务">
+        <button class="seg is-active" type="button" data-filter="all">全部</button>
+        <button class="seg" type="button" data-filter="todo">未完成</button>
+        <button class="seg" type="button" data-filter="done">已完成</button>
+      </div>
+      <input id="searchInput" class="search" type="search" placeholder="搜索任务…" aria-label="搜索任务">
+    </div>
+
+    <p class="hint-line" id="filterHint" hidden></p>
+    <div id="phaseList" class="phase-list"></div>
+
+    <div class="footnote">
+      <p>勾选任务会自动保存。点「笔记」写下自己的理解、报错和疑问，手机和电脑上都能看到。</p>
+    </div>
+  </section>
+
+  <!-- ==================== 热词百科 ==================== -->
+  <section id="view-glossary" class="view" role="tabpanel" hidden>
+    <div class="view-head">
+      <h2>AI 热词百科</h2>
+      <p class="view-sub">听到别人说 LLM、Agent、RAG、MCP 却不知道在说什么？这里每个词都有一句人话解释，以及它和相近概念到底差在哪。</p>
+    </div>
+
+    <div class="sticky-filter">
+      <input id="glossarySearch" class="search" type="search" placeholder="搜索名词，比如 agent、幻觉、微调…" aria-label="搜索名词">
+      <div id="glossaryCats" class="chips" role="group" aria-label="按分类筛选"></div>
+    </div>
+
+    <p class="hint-line" id="glossaryCount"></p>
+    <div id="glossaryList" class="term-list"></div>
+  </section>
+
+  <!-- ==================== 模型图谱 ==================== -->
+  <section id="view-graph" class="view" role="tabpanel" hidden>
+    <div class="view-head">
+      <h2>模型与 Agent 图谱</h2>
+      <p class="view-sub">现在最火的大模型、编程 Agent、搭建平台都在这里，每个都说清楚它强在哪、和别人差在哪、什么情况下该选它。</p>
+    </div>
+
+    <div class="notice" id="graphDisclaimer"></div>
+
+    <div id="graphCats" class="chips" role="group" aria-label="按类型筛选"></div>
+    <p class="hint-line" id="graphCount"></p>
+    <div id="graphList" class="graph-list"></div>
+
+    <div class="section-head">
+      <h2>实时榜单</h2>
+      <span class="muted small">权威数据看这里</span>
+    </div>
+    <div id="graphLive" class="live-list"></div>
+  </section>
+
+  <!-- ==================== 学习日志 ==================== -->
+  <section id="view-log" class="view" role="tabpanel" hidden>
+    <form id="logForm" class="card form">
+      <h2 class="card-title">写一条学习日志</h2>
+      <div class="field-row">
+        <label class="field">
+          <span>日期</span>
+          <input id="logDate" type="date" required>
+        </label>
+        <label class="field">
+          <span>用时（分钟）</span>
+          <input id="logMinutes" type="number" min="0" max="1440" step="5" placeholder="60">
+        </label>
+      </div>
+      <label class="field">
+        <span>今天学了什么</span>
+        <input id="logTitle" type="text" maxlength="60" placeholder="例：看完线性代数第 3 讲，搞懂矩阵乘法" required>
+      </label>
+      <label class="field">
+        <span>细节 / 疑问 / 明天要做的</span>
+        <textarea id="logContent" rows="3" placeholder="例：矩阵乘法不满足交换律；明天想用 numpy 验证一遍。"></textarea>
+      </label>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" id="logSubmit">保存日志</button>
+        <button class="btn" type="button" id="logCancel" hidden>取消编辑</button>
+      </div>
+    </form>
+
+    <div class="section-head">
+      <h2>历史日志</h2>
+      <span class="muted small" id="logCount"></span>
+    </div>
+    <div id="logList" class="log-list"></div>
+  </section>
+
+  <!-- ==================== 统计 ==================== -->
+  <section id="view-stats" class="view" role="tabpanel" hidden>
+    <div class="stat-grid">
+      <div class="card stat">
+        <span class="muted small">总体完成度</span>
+        <strong class="stat-value" id="statPercent">0%</strong>
+        <span class="muted small" id="statTasks">0 / 0 个任务</span>
+      </div>
+      <div class="card stat">
+        <span class="muted small">连续学习</span>
+        <strong class="stat-value"><span id="statStreak">0</span> <small>天</small></strong>
+        <span class="muted small">最长 <span id="statStreakBest">0</span> 天</span>
+      </div>
+      <div class="card stat">
+        <span class="muted small">累计投入</span>
+        <strong class="stat-value"><span id="statHours">0</span> <small>小时</small></strong>
+        <span class="muted small" id="statLogCount">0 条日志</span>
+      </div>
+      <div class="card stat">
+        <span class="muted small">学习天数</span>
+        <strong class="stat-value"><span id="statDays">0</span> <small>天</small></strong>
+        <span class="muted small" id="statStart">—</span>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>各阶段进度</h2></div>
+    <div id="phaseStats" class="card phase-stats"></div>
+
+    <div class="section-head"><h2>最近 14 天</h2></div>
+    <div id="activityChart" class="card activity"></div>
+
+    <div class="section-head"><h2>完成记录</h2></div>
+    <div id="timeline" class="timeline"></div>
+  </section>
+
+  <!-- ==================== 设置 ==================== -->
+  <section id="view-settings" class="view" role="tabpanel" hidden>
+    <form id="profileForm" class="card form">
+      <h2 class="card-title">学习档案</h2>
+      <label class="field">
+        <span>称呼</span>
+        <input id="profileName" type="text" maxlength="20" placeholder="怎么称呼你">
+      </label>
+      <label class="field">
+        <span>开始学习日期</span>
+        <input id="profileStart" type="date">
+      </label>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">保存</button>
+      </div>
+    </form>
+
+    <div class="card form">
+      <h2 class="card-title">数据同步</h2>
+      <p class="sync-line" id="syncDetail">正在检测…</p>
+      <label class="field">
+        <span>同步方式</span>
+        <select id="syncMode">
+          <option value="auto">自动检测（推荐）</option>
+          <option value="server">本机服务器（需电脑开机）</option>
+          <option value="gist">GitHub Gist（电脑关机也能用）</option>
+          <option value="custom">自定义接口</option>
+          <option value="off">关闭同步（只用本设备）</option>
+        </select>
+      </label>
+
+      <div id="gistFields" class="sync-fields" hidden>
+        <label class="field">
+          <span>GitHub Token（权限只勾 gist）</span>
+          <input id="gistToken" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_... 或 ghp_...">
+        </label>
+        <label class="field">
+          <span>Gist ID（留空会自动创建）</span>
+          <input id="gistId" type="text" autocomplete="off" spellcheck="false" placeholder="首次同步留空即可">
+        </label>
+        <p class="muted small">
+          创建地址：
+          <a class="res-link" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">细粒度 Token</a>
+          或
+          <a class="res-link" href="https://github.com/settings/tokens/new?scopes=gist" target="_blank" rel="noopener noreferrer">经典 Token（勾 gist）</a>
+          。Token 只保存在这台设备的浏览器里。
+        </p>
+      </div>
+
+      <div id="customFields" class="sync-fields" hidden>
+        <label class="field">
+          <span>接口地址</span>
+          <input id="syncEndpoint" type="url" autocomplete="off" spellcheck="false" placeholder="https://你的域名/api/state">
+        </label>
+        <p class="muted small">需要支持 GET 读取、POST 写入 <code>{"state": ...}</code>，和本机服务器的 <code>/api/state</code> 格式一致。</p>
+      </div>
+
+      <p class="muted small" id="syncHelp"></p>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="button" id="syncSave">保存并同步</button>
+        <button class="btn" type="button" id="syncNow">立即同步</button>
+        <button class="btn" type="button" id="syncForget" hidden>清除云端配置</button>
+      </div>
+    </div>
+
+    <div class="card form">
+      <h2 class="card-title">备份与恢复</h2>
+      <p class="muted small">导出的 JSON 文件包含全部进度、笔记和日志。换电脑或换浏览器时，导入即可恢复。</p>
+      <div class="form-actions">
+        <button class="btn" type="button" id="exportBtn">导出 JSON</button>
+        <button class="btn" type="button" id="importBtn">导入 JSON</button>
+        <input id="importFile" type="file" accept="application/json,.json" hidden>
+      </div>
+    </div>
+
+    <div class="card form danger-card">
+      <h2 class="card-title">重置</h2>
+      <p class="muted small">清空全部勾选、笔记和日志，回到空白状态。此操作不可撤销。</p>
+      <div class="form-actions">
+        <button class="btn btn-danger" type="button" id="resetBtn">清空所有数据</button>
+      </div>
+    </div>
+
+    <div class="footnote">
+      <p id="aboutLine">AI 学习站</p>
+    </div>
+  </section>
+
+</main>
+
+<nav class="tabbar" role="tablist" aria-label="主导航">
+  <button class="tabbar-btn is-active" type="button" role="tab" data-tab="roadmap" aria-controls="view-roadmap" aria-selected="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V7a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v11"></path><path d="M17 10h2a1 1 0 0 1 1 1v6a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2"></path></svg>
+    <span>路线</span>
+  </button>
+  <button class="tabbar-btn" type="button" role="tab" data-tab="glossary" aria-controls="view-glossary" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"></path><path d="M9 7.5h6M9 11h4"></path></svg>
+    <span>名词</span>
+  </button>
+  <button class="tabbar-btn" type="button" role="tab" data-tab="graph" aria-controls="view-graph" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.6"></circle><circle cx="18" cy="7" r="2.6"></circle><circle cx="12" cy="18" r="2.6"></circle><path d="M8.2 7.4l7.6-.4M7.1 8.3l3.8 7.4M16.9 9.4l-3.6 6.4"></path></svg>
+    <span>图谱</span>
+  </button>
+  <button class="tabbar-btn" type="button" role="tab" data-tab="log" aria-controls="view-log" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16H5z"></path><path d="M8.5 9h7M8.5 13h5"></path></svg>
+    <span>日志</span>
+  </button>
+  <button class="tabbar-btn" type="button" role="tab" data-tab="stats" aria-controls="view-stats" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"></path><path d="M8 19v-6M12.5 19V8M17 19v-4"></path></svg>
+    <span>统计</span>
+  </button>
+  <button class="tabbar-btn" type="button" role="tab" data-tab="settings" aria-controls="view-settings" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"></path></svg>
+    <span>设置</span>
+  </button>
+</nav>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="curriculum.js"></script>
+<script src="glossary.js"></script>
+<script src="models.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

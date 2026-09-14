@@ -1,0 +1,9 @@
+# 学习数据：包含个人笔记和日志，不提交到 GitHub
+data/
+
+# 系统与编辑器产生的杂物
+.DS_Store
+Thumbs.db
+.vscode/
+__pycache__/
+*.tmp

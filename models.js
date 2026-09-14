@@ -1,0 +1,560 @@
+/*
+ * 模型与 Agent 图谱。
+ * cat 分类：closed 云端大模型 / open 开放权重模型 / coding 编程 Agent / agent 通用 Agent
+ *           platform 平台与框架 / local 本地运行
+ * 字段：tagline 一句话定位、good 强项、vs 和同类比的区别、pick 适合谁、link 官网
+ * 重要：这里的版本号不会自动更新，需要你隔一段时间自己核对一次。
+ */
+window.MODEL_GRAPH = {
+  updated: "2026-09",
+  disclaimer: "这是按「模型家族 / 产品」整理的框架，不是实时排行榜。AI 领域版本更新极快，具体版本号、价格和排名请用下面的实时榜单核对。",
+  cats: [
+    { id: "closed", name: "云端大模型", desc: "通过接口调用，能力上限高、省心，但数据要出门" },
+    { id: "open", name: "开放权重模型", desc: "权重能下载，可私有化、可微调、可不联网" },
+    { id: "coding", name: "编程 Agent", desc: "能读写项目、跑测试、自己改到跑通" },
+    { id: "agent", name: "通用 Agent", desc: "给个目标自己干完，而不只是回答问题" },
+    { id: "platform", name: "平台与框架", desc: "自己搭应用、搭知识库、搭自动化流程" },
+    { id: "local", name: "本地运行", desc: "在自己电脑上把模型跑起来" }
+  ],
+  live: [
+    { label: "LMArena（人类盲测投票）", url: "https://lmarena.ai/", note: "看综合和分项人气排名" },
+    { label: "Artificial Analysis（能力与价格对比）", url: "https://artificialanalysis.ai/", note: "同时看效果、速度和价格，选型最实用" },
+    { label: "OpenRouter 排行榜", url: "https://openrouter.ai/rankings", note: "看开发者真实调用量，最接近「谁在用」" },
+    { label: "Hugging Face 模型榜", url: "https://huggingface.co/models", note: "看开源模型热度与下载量" },
+    { label: "SuperCLUE（中文能力评测）", url: "https://www.superclueai.com/", note: "中文场景的专项参考" },
+    { label: "GitHub Trending", url: "https://github.com/trending", note: "看 Agent 和框架层最近在火什么" }
+  ],
+  items: [
+    /* ---------------- 云端大模型 ---------------- */
+    {
+      id: "gpt",
+      name: "GPT 系列",
+      org: "OpenAI",
+      cat: "closed",
+      hot: true,
+      access: "闭源 API",
+      tagline: "最像「默认选项」的一线模型，综合能力均衡，生态和第三方集成最广。",
+      good: ["综合能力全面", "工具调用与 Agent 生态成熟", "第三方工具几乎都优先支持它"],
+      vs: "和 Claude 比，它更像万金油：什么都行，但很少是某一项里最极端的。和开源模型比，省心但数据要出门、按量付费。",
+      pick: "第一次上手、要做通用产品、需要稳定 API 支持。",
+      link: "https://openai.com/"
+    },
+    {
+      id: "claude",
+      name: "Claude 系列",
+      org: "Anthropic",
+      cat: "closed",
+      hot: true,
+      access: "闭源 API",
+      tagline: "长文写作和代码是长板，指令遵循严谨，配套的 Claude Code 是编程 Agent 里的标杆。",
+      good: ["长文档分析与写作", "代码质量与重构", "工具链（终端、文件、数据库）操作稳"],
+      vs: "和 GPT 比，风格更严谨、更愿意承认不确定；写长文的自然度口碑更好。价格档位偏高。",
+      pick: "写长文、做代码重构、需要它真的动手操作文件系统。",
+      link: "https://claude.ai/"
+    },
+    {
+      id: "gemini",
+      name: "Gemini 系列",
+      org: "Google DeepMind",
+      cat: "closed",
+      hot: true,
+      access: "闭源 API",
+      tagline: "多模态和超长上下文是强项，和 Google 生态（搜索、办公套件）打通最顺。",
+      good: ["图片、视频、音频理解", "超长上下文", "与 Google 办公生态集成"],
+      vs: "和另两家比，多模态和上下文长度是明确的强项；如果你重度用 Google 全家桶，体验优势明显。",
+      pick: "要处理视频、超长文档，或本来就在 Google 生态里。",
+      link: "https://gemini.google.com/"
+    },
+    {
+      id: "grok",
+      name: "Grok",
+      org: "xAI",
+      cat: "closed",
+      access: "闭源 API",
+      tagline: "绑定 X 平台，主打实时信息和热点事件的理解。",
+      good: ["实时信息", "社交平台内容", "风格活泼"],
+      vs: "和其他通用模型比，它的差异主要在「信息够新」，通用任务上不一定更强。",
+      pick: "关注热点、需要实时信息的时候。",
+      link: "https://x.ai/"
+    },
+    {
+      id: "deepseek",
+      name: "DeepSeek 系列",
+      org: "深度求索",
+      cat: "closed",
+      hot: true,
+      access: "闭源 API + 开放权重",
+      tagline: "性价比极高：中文和代码强、推理模型出色，同时把权重开放出来。你手上用的就是这家。",
+      good: ["中文与代码表现好", "同档位里价格低", "同时提供开放权重，可自己部署"],
+      vs: "和一线闭源模型比，能力接近但价格低一个量级，同时你还能把权重拿下来本地跑——这是 GPT 和 Claude 给不了的。",
+      pick: "预算有限、要中文、想兼顾 API 和本地部署。",
+      link: "https://www.deepseek.com/"
+    },
+    {
+      id: "qwen",
+      name: "通义千问",
+      org: "阿里云",
+      cat: "closed",
+      hot: true,
+      access: "闭源 API + 开放权重",
+      tagline: "中文开源生态里最活跃的一支，尺寸最全：从手机端小模型到服务器级大模型都有。",
+      good: ["开源型号最丰富", "中文能力扎实", "工具链和社区活跃"],
+      vs: "和 DeepSeek 的差异：Qwen 的型号矩阵更宽（各种尺寸、各种专用版本），DeepSeek 更集中在少数几个强型号上。",
+      pick: "想自己部署、需要挑尺寸、做中文应用。",
+      link: "https://www.qianwen.com/"
+    },
+    {
+      id: "kimi",
+      name: "Kimi",
+      org: "月之暗面",
+      cat: "closed",
+      access: "闭源 API",
+      tagline: "靠长文本起家的中文助手，处理长文档、长资料、联网研究比较顺手。",
+      good: ["长文档", "中文写作", "联网检索"],
+      vs: "和通用大模型比，优势集中在长文本和中文场景；写代码方面不如专攻代码的模型。",
+      pick: "中文长文档阅读、写材料。",
+      link: "https://www.kimi.com/"
+    },
+    {
+      id: "glm",
+      name: "智谱 GLM",
+      org: "智谱 AI",
+      cat: "closed",
+      access: "闭源 API + 开放权重",
+      tagline: "国内老牌大模型团队，中文能力稳，开源版本多，企业私有化案例多。",
+      good: ["中文任务", "开放权重型号多", "企业私有化支持"],
+      vs: "和互联网大厂模型比，它更早开放权重、更偏 B 端和私有化部署。",
+      pick: "要做私有化部署、面向企业场景。",
+      link: "https://www.zhipuai.cn/"
+    },
+    {
+      id: "doubao",
+      name: "豆包",
+      org: "字节跳动",
+      cat: "closed",
+      access: "闭源 API",
+      tagline: "主打便宜和中文场景，和字节的内容与办公产品结合紧。",
+      good: ["价格低", "中文对话体验顺", "多模态产品线齐"],
+      vs: "和一线模型比，极限能力略弱但成本优势明显，适合量大、要求不极端的场景。",
+      pick: "中文应用、量大、在意成本。",
+      link: "https://www.doubao.com/"
+    },
+    {
+      id: "others-cn",
+      name: "文心 / 混元 / MiniMax 等",
+      org: "百度 / 腾讯 / MiniMax 等",
+      cat: "closed",
+      access: "闭源 API",
+      tagline: "国内其他主流模型，各自绑定自家生态（搜索、社交、内容），在特定场景里有优势。",
+      good: ["和自家生态深度整合", "合规与本地化支持", "部分场景价格低"],
+      vs: "和前几家比，通用能力可能略逊，但如果你的业务本来就在它家的生态里，整合成本最低。",
+      pick: "已经在用对应云平台或产品生态时。",
+      link: "https://yiyan.baidu.com/"
+    },
+
+    /* ---------------- 开放权重模型 ---------------- */
+    {
+      id: "deepseek-open",
+      name: "DeepSeek 开放权重版本",
+      org: "深度求索",
+      cat: "open",
+      hot: true,
+      access: "开放权重",
+      tagline: "把接近一线水平的模型权重直接放出来，是很多人第一次成功本地跑大模型的选择。",
+      good: ["能力强且可直接下载", "社区微调版本多", "中文表现好"],
+      vs: "和只提供 API 的模型比，你能自己量化、自己微调、数据不出机器；代价是显存要求高、要自己维护。",
+      pick: "要私有化、要自己微调、不想按次付费。",
+      link: "https://huggingface.co/deepseek-ai"
+    },
+    {
+      id: "qwen-open",
+      name: "Qwen 开放权重版本",
+      org: "阿里云",
+      cat: "open",
+      hot: true,
+      access: "开放权重",
+      tagline: "尺寸覆盖最全的一支开源模型，从能在笔记本上跑的几 B 到服务器级大模型都有。",
+      good: ["各种尺寸可选", "代码、视觉、语音都有专门版本", "中文社区活跃"],
+      vs: "和 Llama 比，中文更强、尺寸选择更多；很多本地部署教程都以它为例。",
+      pick: "本地跑、按硬件挑尺寸、中文任务。",
+      link: "https://huggingface.co/Qwen"
+    },
+    {
+      id: "llama",
+      name: "Llama",
+      org: "Meta",
+      cat: "open",
+      access: "开放权重",
+      tagline: "最有名的开源权重模型家族，全球生态和工具支持最广，英文资料最多。",
+      good: ["生态和教程最多", "英文表现好", "工具链适配最全"],
+      vs: "和 Qwen、DeepSeek 比，中文是明显弱项；但英文资料和第三方支持是优势。",
+      pick: "看英文资料、做英文应用、跟国际教程走。",
+      link: "https://www.llama.com/"
+    },
+    {
+      id: "gemma",
+      name: "Gemma",
+      org: "Google",
+      cat: "open",
+      access: "开放权重",
+      tagline: "Google 放出的轻量开放模型，主打小体积、能在普通电脑甚至端侧跑。",
+      good: ["体积小、跑得动", "许可证宽松", "适合学习和原型"],
+      vs: "和 Llama、Qwen 大版本比，能力弱一档，但资源要求低得多，适合练手。",
+      pick: "显卡不强、只想先跑通流程。",
+      link: "https://ai.google.dev/gemma"
+    },
+    {
+      id: "mistral",
+      name: "Mistral",
+      org: "Mistral AI",
+      cat: "open",
+      access: "开放权重 + 商业 API",
+      tagline: "欧洲团队，主打高效小模型和 MoE 架构，同等体积下效率突出。",
+      good: ["小模型效率高", "MoE 实践领先", "欧洲合规场景"],
+      vs: "和中文模型比，中文一般；但在欧美企业场景里是常见选择。",
+      pick: "英文场景、在意推理效率。",
+      link: "https://mistral.ai/"
+    },
+    {
+      id: "glm-open",
+      name: "GLM 开放权重版本",
+      org: "智谱 AI",
+      cat: "open",
+      access: "开放权重",
+      tagline: "中文开源模型里的另一个主力，轻量版本在消费级显卡上也能跑。",
+      good: ["中文友好", "有面向低显存的版本", "配套工具齐全"],
+      vs: "和 Qwen 比生态小一些，但中文任务表现稳定，文档对国内用户更友好。",
+      pick: "中文场景的本地部署。",
+      link: "https://github.com/THUDM"
+    },
+    {
+      id: "minicpm",
+      name: "MiniCPM 等端侧模型",
+      org: "面壁智能等",
+      cat: "open",
+      access: "开放权重",
+      tagline: "专门做「小到能塞进手机和嵌入式设备」的模型，能力换来极致体积。",
+      good: ["极小体积", "可离线、可端侧", "多模态版本"],
+      vs: "和大模型比能力差距明显，但能离线、能进手机，是另一种用法。",
+      pick: "端侧、离线、隐私敏感的小任务。",
+      link: "https://github.com/OpenBMB"
+    },
+
+    /* ---------------- 编程 Agent ---------------- */
+    {
+      id: "claude-code",
+      name: "Claude Code",
+      org: "Anthropic",
+      cat: "coding",
+      hot: true,
+      access: "命令行工具（配合 API）",
+      tagline: "在终端里工作的编程 Agent：自己读项目、改文件、跑命令、跑测试，直到任务完成。",
+      good: ["自主多步执行能力强", "能处理大型代码库", "终端/脚本场景顺手"],
+      vs: "和 AI 编辑器（Cursor 类）比，它不是「编辑器加 AI」，而是「你给任务它自己干」，更像把活派出去。",
+      pick: "已经熟悉命令行、想让 AI 独立完成一整个任务。",
+      link: "https://claude.com/product/claude-code"
+    },
+    {
+      id: "codex",
+      name: "Codex",
+      org: "OpenAI",
+      cat: "coding",
+      hot: true,
+      access: "命令行 / 云端 / 桌面应用",
+      tagline: "OpenAI 的编程 Agent，能在本地项目里改代码，也能把任务丢到云端跑。",
+      good: ["多步任务执行", "和 OpenAI 生态打通", "支持并行处理多个任务"],
+      vs: "和 Claude Code 定位最接近，差异主要在模型风格和生态：选哪家更多看你已经在用谁的模型。",
+      pick: "已经在用 GPT 系列、想有个能直接改本地项目的 Agent。",
+      link: "https://openai.com/codex/"
+    },
+    {
+      id: "cursor",
+      name: "Cursor",
+      org: "Anysphere",
+      cat: "coding",
+      hot: true,
+      access: "AI 编辑器（付费）",
+      tagline: "把 VS Code 改造成 AI 优先的编辑器：边写边补全，也能一次性改多个文件。",
+      good: ["上手快、界面友好", "项目级修改", "支持多种模型切换"],
+      vs: "和终端类 Agent 比，它更强调「你在里面写代码」；和插件比，它的上下文理解更深。",
+      pick: "想要一个顺手的 AI 编辑器、不想离开图形界面。",
+      link: "https://cursor.com/"
+    },
+    {
+      id: "windsurf",
+      name: "Windsurf",
+      org: "Windsurf",
+      cat: "coding",
+      access: "AI 编辑器（付费）",
+      tagline: "另一款 AI 编辑器，主打让 AI 跟着你的操作自动延续上下文的体验。",
+      good: ["自动化流程顺", "多文件编辑", "界面清爽"],
+      vs: "和 Cursor 功能高度重叠，差别在手感和定价。建议都试一天再决定。",
+      pick: "试过 Cursor 觉得不顺手的人。",
+      link: "https://windsurf.com/"
+    },
+    {
+      id: "trae",
+      name: "Trae",
+      org: "字节跳动",
+      cat: "coding",
+      access: "AI 编辑器（有免费档）",
+      tagline: "中文界面的 AI 编辑器，国内网络环境下体验顺畅，你正在用它。",
+      good: ["中文界面和中文文档", "国内访问顺畅", "有免费额度"],
+      vs: "和 Cursor 比功能相近，主要优势是国内网络和中文支持。",
+      pick: "国内网络、希望界面全中文。",
+      link: "https://www.trae.ai/"
+    },
+    {
+      id: "copilot",
+      name: "GitHub Copilot",
+      org: "GitHub / 微软",
+      cat: "coding",
+      access: "IDE 插件（付费）",
+      tagline: "最早普及的 AI 编程助手，插件形式，几乎支持所有主流编辑器。",
+      good: ["支持 IDE 最全", "企业合规支持", "和 GitHub 工作流整合"],
+      vs: "和 Cursor、Claude Code 比，自主性偏弱，更偏「助手」而不是「替你干完」。",
+      pick: "公司统一采购、要合规模板。",
+      link: "https://github.com/features/copilot"
+    },
+    {
+      id: "cline",
+      name: "Cline / Roo Code",
+      org: "开源社区",
+      cat: "coding",
+      access: "开源插件（自备 API Key）",
+      tagline: "VS Code 里的开源编程 Agent，自己填 API Key，用多少花多少。",
+      good: ["完全开源可审计", "自己控制模型和花费", "轻量"],
+      vs: "和 Cursor 比没有订阅费，但要自己配 Key；适合愿意折腾的人。",
+      pick: "想省钱、想自己选模型。",
+      link: "https://cline.bot/"
+    },
+    {
+      id: "aider",
+      name: "Aider",
+      org: "开源社区",
+      cat: "coding",
+      access: "开源命令行工具",
+      tagline: "命令行里的开源编程助手，自动把改动提交成规范的小 commit。",
+      good: ["和 git 工作流天然契合", "开源免费", "支持多家模型"],
+      vs: "比 Claude Code 简陋，但轻、透明、可控，是理解编程 Agent 原理的好起点。",
+      pick: "想搞懂编程 Agent 到底怎么运作。",
+      link: "https://aider.chat/"
+    },
+    {
+      id: "workbuddy",
+      name: "WorkBuddy",
+      org: "（你正在使用）",
+      cat: "coding",
+      access: "？",
+      tagline: "你提到的三个 agent 之一。我这边没有可靠资料，条目先留空，等你补一句它是做什么的。",
+      good: ["待补充"],
+      vs: "待补充。",
+      pick: "待补充。",
+      link: ""
+    },
+
+    /* ---------------- 通用 Agent ---------------- */
+    {
+      id: "chatgpt-agent",
+      name: "ChatGPT（Agent / 深度研究模式）",
+      org: "OpenAI",
+      cat: "agent",
+      hot: true,
+      access: "订阅制产品",
+      tagline: "从聊天框升级成能干活的助手：自己上网查、操作浏览器、跑代码、交报告。",
+      good: ["通用任务覆盖广", "能长时间自主执行", "产物可直接用"],
+      vs: "和单独调 API 比，它是成品产品，开箱就用；灵活性不如自己搭，但省掉全部工程活。",
+      pick: "日常任务自动化、做调研报告。",
+      link: "https://chatgpt.com/"
+    },
+    {
+      id: "claude-computer-use",
+      name: "Claude Computer Use",
+      org: "Anthropic",
+      cat: "agent",
+      access: "API 能力",
+      tagline: "让模型直接看屏幕、点鼠标、敲键盘，替你在没有接口的老软件里操作。",
+      good: ["能操作没有 API 的软件", "通用性强", "可按需集成"],
+      vs: "和写代码调用接口比，它更通用但更慢也更容易点错；有 API 时不要用它。",
+      pick: "流程必须走图形界面、又没有接口可用。",
+      link: "https://docs.claude.com/en/docs/agents-and-tools/computer-use"
+    },
+    {
+      id: "manus",
+      name: "Manus",
+      org: "Manus",
+      cat: "agent",
+      hot: true,
+      access: "订阅制产品",
+      tagline: "面向通用任务的自主 Agent，给个目标它自己拆步骤、上网、写文件、交成果。",
+      good: ["长任务自主执行", "产物是文件不是聊天", "中文支持好"],
+      vs: "和 ChatGPT Agent 同类，差异在任务执行风格和产物形态，看哪个更贴合你的活儿。",
+      pick: "想把整件事交出去、拿回一个成品文件。",
+      link: "https://manus.im/"
+    },
+    {
+      id: "perplexity",
+      name: "Perplexity（含深度研究）",
+      org: "Perplexity",
+      cat: "agent",
+      access: "订阅制产品",
+      tagline: "AI 搜索的代表：给你带引用的答案，而不是一堆链接。",
+      good: ["答案带出处", "联网实时", "研究类任务效率高"],
+      vs: "和通用 Agent 比，它专注在「查和答」这一件事上，做得更专；不适合替你写代码或操作文件。",
+      pick: "日常查资料、需要引用来源。",
+      link: "https://www.perplexity.ai/"
+    },
+
+    /* ---------------- 平台与框架 ---------------- */
+    {
+      id: "coze",
+      name: "扣子 Coze",
+      org: "字节跳动",
+      cat: "platform",
+      access: "在线平台（有免费档）",
+      tagline: "可视化搭 AI 应用：拖拽编排流程、接知识库、发布成网页或机器人，基本不写代码。",
+      good: ["零代码上手", "中文界面", "发布渠道多（微信、飞书等）"],
+      vs: "和 Dify 比，更偏消费级和快速上线；和 n8n 比，更偏 AI 应用而不是系统自动化。",
+      pick: "不写代码，想快速做一个能用的 AI 应用。",
+      link: "https://www.coze.cn/"
+    },
+    {
+      id: "dify",
+      name: "Dify",
+      org: "Dify 开源项目",
+      cat: "platform",
+      hot: true,
+      access: "开源 + 云服务",
+      tagline: "开源的 LLM 应用平台，把提示词、知识库、Agent 编排、观测都做成了可视化界面。",
+      good: ["可自己部署", "RAG 一套做全", "从原型到上线路径清晰"],
+      vs: "和扣子比更偏工程和私有化；和直接写 LangChain 代码比，省掉大量胶水代码。",
+      pick: "想要私有化、又不想从零写代码的团队或个人。",
+      link: "https://dify.ai/"
+    },
+    {
+      id: "n8n",
+      name: "n8n",
+      org: "n8n",
+      cat: "platform",
+      hot: true,
+      access: "开源 + 云服务",
+      tagline: "自动化工作流工具，把上千个系统连起来，再在关键节点塞进 AI。",
+      good: ["连接的服务极多", "可视化流程", "可自建可托管"],
+      vs: "和 Dify 的区别：Dify 以 AI 应用为中心，n8n 以「系统之间的自动化」为中心。要做「AI 加自动化流程」用 n8n 更合适。",
+      pick: "想把邮箱、表格、消息、数据库和 AI 串成一条自动流水线。",
+      link: "https://n8n.io/"
+    },
+    {
+      id: "langchain",
+      name: "LangChain / LangGraph",
+      org: "LangChain",
+      cat: "platform",
+      access: "开源框架",
+      tagline: "最主流的 LLM 应用开发框架：LangChain 管组件，LangGraph 管复杂的多步 Agent 流程。",
+      good: ["生态最大、教程最多", "组件齐全", "LangGraph 适合复杂状态机"],
+      vs: "和 Dify 比，它要写代码，但灵活度最高、不锁定平台。上手门槛也更高，容易一开始就写复杂。",
+      pick: "要写代码、要精细控制每一步流程。",
+      link: "https://www.langchain.com/"
+    },
+    {
+      id: "llamaindex",
+      name: "LlamaIndex",
+      org: "LlamaIndex",
+      cat: "platform",
+      access: "开源框架",
+      tagline: "专注在「把资料喂给模型」这件事上：各种文档解析、切分、检索、索引都准备好了。",
+      good: ["文档加载器最全", "RAG 高级检索方案多", "上手快"],
+      vs: "和 LangChain 比，它更专注 RAG、更少牵扯编排；做知识库问答时往往更省事。",
+      pick: "核心需求就是「让 AI 读我的资料」。",
+      link: "https://www.llamaindex.ai/"
+    },
+    {
+      id: "autogen",
+      name: "AutoGen / CrewAI",
+      org: "微软 / CrewAI",
+      cat: "platform",
+      access: "开源框架",
+      tagline: "多智能体框架：让几个角色（规划者、执行者、审查者）互相讨论，合作完成任务。",
+      good: ["多角色协作现成模板", "适合复杂任务分解", "社区案例多"],
+      vs: "和单 Agent 框架比，它多了一层「协作」的抽象。但任务简单时反而更乱，别为了用而用。",
+      pick: "任务确实需要多个角色分工时。",
+      link: "https://microsoft.github.io/autogen/"
+    },
+    {
+      id: "mcp",
+      name: "MCP（模型上下文协议）",
+      org: "Anthropic 发起，开放协议",
+      cat: "platform",
+      hot: true,
+      access: "开放协议",
+      tagline: "AI 世界的「USB 接口」：任何工具按这个协议实现一次，所有支持它的 AI 客户端都能直接用。",
+      good: ["一次接入到处能用", "生态增长快", "浏览器、文件、数据库都有现成服务"],
+      vs: "和每个工具单独写对接代码比，它把 N×M 的适配问题变成了 N+M。这是理解现代 Agent 生态的关键一环。",
+      pick: "想让你的 AI 接上自己的工具和数据源。",
+      link: "https://modelcontextprotocol.io/"
+    },
+    {
+      id: "ragflow",
+      name: "RAGFlow / FastGPT / AnythingLLM",
+      org: "各开源团队",
+      cat: "platform",
+      access: "开源，可自建",
+      tagline: "开箱即用的知识库问答系统：传文档进去，就能得到带引用的问答界面。",
+      good: ["部署完就能用", "自带文档解析和引用", "适合做内部知识库"],
+      vs: "和 Dify 比更专一，只做知识库；和手写 RAG 比省掉大量调试，但可定制空间小。",
+      pick: "想给自己的资料做一个能用的问答机器人。",
+      link: "https://ragflow.io/"
+    },
+
+    /* ---------------- 本地运行 ---------------- */
+    {
+      id: "ollama",
+      name: "Ollama",
+      org: "Ollama",
+      cat: "local",
+      hot: true,
+      access: "免费开源工具",
+      tagline: "一行命令就能在本地跑开源模型，免配置，是入门本地部署最省事的方式。",
+      good: ["安装和运行极简单", "模型库一键下载", "对外提供兼容接口"],
+      vs: "和 vLLM 比，它优先易用性，不适合高并发生产；学习和小规模自用完全够。",
+      pick: "第一次在本机跑模型。",
+      link: "https://ollama.com/"
+    },
+    {
+      id: "lmstudio",
+      name: "LM Studio",
+      org: "LM Studio",
+      cat: "local",
+      access: "免费桌面应用",
+      tagline: "带图形界面的本地模型管理器：搜索、下载、聊天、起接口，全部点鼠标完成。",
+      good: ["图形界面友好", "能直接看显存和速度", "内置聊天界面"],
+      vs: "和 Ollama 比更直观，适合不想碰命令行的人；自动化能力弱一些。",
+      pick: "想先看看自己电脑能跑多大的模型。",
+      link: "https://lmstudio.ai/"
+    },
+    {
+      id: "vllm",
+      name: "vLLM",
+      org: "开源项目",
+      cat: "local",
+      access: "开源",
+      tagline: "面向生产的高性能推理引擎，同样硬件能扛住多得多的并发请求。",
+      good: ["吞吐量高", "生产级特性全", "支持量化与分布式"],
+      vs: "和 Ollama 比，它快得多但配置复杂，是「给自己用」和「给别人用」的分界线。",
+      pick: "要把模型部署成给多人使用的服务。",
+      link: "https://docs.vllm.ai/"
+    },
+    {
+      id: "openwebui",
+      name: "Open WebUI",
+      org: "开源项目",
+      cat: "local",
+      access: "开源",
+      tagline: "给自己搭一个 ChatGPT 式的界面，后端可以接本地模型或任何 API。",
+      good: ["界面接近 ChatGPT", "多模型统一入口", "支持知识库和多用户"],
+      vs: "和直接用厂商网页比，它把多个模型和你的本地模型统一在一个界面里，数据留在自己这里。",
+      pick: "本地模型跑起来了，但想要个好用的聊天界面。",
+      link: "https://openwebui.com/"
+    }
+  ]
+};
