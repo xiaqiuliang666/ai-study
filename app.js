@@ -14,14 +14,16 @@
 
   /* ---------- 扁平化任务表 ---------- */
   const ALL_TASKS = [];
+  const CORE_TASKS = [];
   const PHASE_OF_TASK = {};
   CUR.phases.forEach(function (phase) {
     phase.tasks.forEach(function (task) {
       ALL_TASKS.push(task);
+      if (!phase.optional) CORE_TASKS.push(task);
       PHASE_OF_TASK[task.id] = phase.id;
     });
   });
-  const TOTAL_MINUTES = ALL_TASKS.reduce(function (sum, t) { return sum + (t.minutes || 0); }, 0);
+  const TOTAL_MINUTES = CORE_TASKS.reduce(function (sum, t) { return sum + (t.minutes || 0); }, 0);
 
   /* ---------- 工具函数 ---------- */
   function pad2(n) { return n < 10 ? "0" + n : String(n); }
@@ -177,8 +179,12 @@
     return ALL_TASKS.reduce(function (n, t) { return n + (isDone(t.id) ? 1 : 0); }, 0);
   }
 
+  function coreDoneCount() {
+    return CORE_TASKS.reduce(function (n, t) { return n + (isDone(t.id) ? 1 : 0); }, 0);
+  }
+
   function remainingMinutes() {
-    return ALL_TASKS.reduce(function (sum, t) { return sum + (isDone(t.id) ? 0 : (t.minutes || 0)); }, 0);
+    return CORE_TASKS.reduce(function (sum, t) { return sum + (isDone(t.id) ? 0 : (t.minutes || 0)); }, 0);
   }
 
   function sortedLog() {
@@ -244,8 +250,8 @@
   }
 
   function nextTask() {
-    for (let i = 0; i < ALL_TASKS.length; i += 1) {
-      if (!isDone(ALL_TASKS[i].id)) return ALL_TASKS[i];
+    for (let i = 0; i < CORE_TASKS.length; i += 1) {
+      if (!isDone(CORE_TASKS[i].id)) return CORE_TASKS[i];
     }
     return null;
   }
@@ -607,7 +613,7 @@
 
   function syncHint() {
     if (sync.mode === "gist") {
-      return "数据存在你 GitHub 账号的一个私密 Gist 里，和这台电脑开不开机无关。手机和电脑填同一个 Token 就会自动共用同一个 Gist。Token 只保存在本设备浏览器里。";
+      return "数据存在你 GitHub 账号的一个私密 Gist 里，和这台电脑开不开机无关。所有设备都要填同一个 Token 和 Gist ID；页面打开时约每 30 秒检查一次新数据。Token 只保存在本设备浏览器里。";
     }
     if (sync.mode === "custom") {
       return "数据存在你自己的接口上。接口需要支持 GET 读取、POST 写入 {state: ...}，规则和本机服务器的 /api/state 相同。";
@@ -822,8 +828,8 @@
   const RING_CIRCUMFERENCE = 2 * Math.PI * 52;
 
   function renderHero() {
-    const total = ALL_TASKS.length;
-    const done = doneCount();
+    const total = CORE_TASKS.length;
+    const done = coreDoneCount();
     const percent = total ? Math.round((done / total) * 100) : 0;
 
     $("heroPercent").textContent = percent + "%";
@@ -969,8 +975,8 @@
 
   /* ---------- 渲染：统计 ---------- */
   function renderStats() {
-    const total = ALL_TASKS.length;
-    const done = doneCount();
+    const total = CORE_TASKS.length;
+    const done = coreDoneCount();
     const percent = total ? Math.round((done / total) * 100) : 0;
     const streak = computeStreak();
     const dates = activityDates();
@@ -1492,6 +1498,13 @@
       }
     });
 
+    if (typeof window.setInterval === "function") {
+      window.setInterval(function () {
+        if (document.hidden || sync.mode === "off" || sync.busy || isEditingField()) return;
+        if (Date.now() - sync.lastPullAt >= 25000) syncOnce("poll", false);
+      }, 30000);
+    }
+
     startSync();
   }
 
@@ -1501,3 +1514,4 @@
     boot();
   }
 })();
+

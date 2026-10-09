@@ -5,7 +5,7 @@
  */
 window.CURRICULUM = {
   title: "AI 学习路线",
-  subtitle: "从 Python 基础一路走到能自己做 LLM 应用",
+  subtitle: "先学 Git/GitHub 与文献方法，再学 Python，最后动手做 AI Agent",
   phases: [
     {
       id: "p0",
@@ -14,10 +14,10 @@ window.CURRICULUM = {
       tasks: [
         {
           id: "p0-1",
-          title: "确认本机开发环境可用",
-          detail: "Python、Node 能正常打印版本号，装好一个顺手的编辑器（VS Code 或 Trae）。之后所有练习都在这台电脑上跑。",
+          title: "准备 Git 和编辑器",
+          detail: "确认 Git 能正常打印版本号，装好一个顺手的编辑器（VS Code 或 Trae）。Python 等到对应阶段再安装和练习。",
           minutes: 60,
-          tip: "命令行里依次执行 python --version、node --version、git --version",
+          tip: "命令行执行 git --version，然后打开编辑器新建一个练习文件夹",
           resources: []
         },
         {
@@ -47,28 +47,102 @@ window.CURRICULUM = {
           resources: []
         },
         {
-          id: "p0-5",
-          title: "选定一条主线课程，写进这里",
-          detail: "不要同时开三门课。挑一门主线（推荐动手学深度学习 / Kaggle Learn / Karpathy 视频，任选一个）+ 一门辅助答疑（DeepSeek）。选定后写在笔记里。",
+          id: "p0-route",
+          title: "确定这条学习路线的起点",
+          detail: "先完成 Git/GitHub，再练文献检索、阅读与引用，然后学 Python，最后动手做 AI Agent。把当前水平和每周可投入的时间写在笔记里。",
           minutes: 40,
-          tip: "把课程名字和链接写在这个任务的笔记里，以后不用再纠结",
-          resources: [
-            { label: "动手学深度学习（中文）", url: "https://zh.d2l.ai/" },
-            { label: "Kaggle Learn", url: "https://www.kaggle.com/learn" },
-            { label: "Karpathy: Zero to Hero", url: "https://karpathy.ai/zero-to-hero.html" }
-          ]
+          tip: "先做出能展示的成果，再决定是否补机器学习与深度学习基础",
+          resources: []
+        }
+      ]
+    },
+    {
+      id: "git",
+      title: "阶段 1 · Git 与 GitHub",
+      goal: "能独立管理本地版本，并把一个小项目发布到 GitHub。",
+      tasks: [
+        {
+          id: "git-1",
+          title: "理解仓库、提交与工作区",
+          detail: "在练习文件夹里运行 git init、git status、git add、git commit、git log，修改文件并做两次有意义的提交。能解释工作区、暂存区和提交各是什么。",
+          minutes: 180,
+          tip: "每做一步都看一次 git status，观察文件状态怎么变化",
+          resources: [{ label: "GitHub：开始使用 Git", url: "https://docs.github.com/zh/get-started/learning-to-code/getting-started-with-git" }]
+        },
+        {
+          id: "git-2",
+          title: "学会分支与合并",
+          detail: "新建一个练习分支，修改 README，提交后合并回主分支；再制造一次简单冲突并自己解决。",
+          minutes: 180,
+          tip: "先在练习仓库操作，不要拿重要文件练冲突",
+          resources: []
+        },
+        {
+          id: "git-3",
+          title: "连接 GitHub 并完成一次推送",
+          detail: "创建 GitHub 仓库，配置远程地址，推送本地提交；再从 GitHub 克隆到另一目录，验证 README 和历史都在。",
+          minutes: 180,
+          tip: "推送前检查 git status 与 .gitignore，确认没有密钥或私人数据",
+          resources: [{ label: "GitHub 入门", url: "https://docs.github.com/zh/get-started/start-your-journey" }]
+        },
+        {
+          id: "git-4",
+          title: "走一遍 Pull Request 流程",
+          detail: "在分支上改一处文档，推送分支、发起 Pull Request、看差异、合并。能说清 clone、pull、push 与 PR 的作用。",
+          minutes: 180,
+          tip: "用自己的练习仓库完成即可",
+          resources: [{ label: "GitHub：编写和存储代码", url: "https://docs.github.com/zh/get-started/start-your-journey/writing-and-storing-your-code" }]
+        }
+      ]
+    },
+    {
+      id: "lit",
+      title: "阶段 2 · 文献检索、阅读与使用",
+      goal: "能找到可信资料、读出核心结论，并在自己的笔记或项目中正确引用。",
+      tasks: [
+        {
+          id: "lit-1",
+          title: "用关键词找到 5 篇相关资料",
+          detail: "围绕 AI Agent 的一个具体问题列出中英文关键词，检索 5 篇论文或技术报告，记录标题、作者、年份、链接与选择理由。",
+          minutes: 180,
+          tip: "先读标题、摘要和结论，筛出值得精读的 1–2 篇",
+          resources: [{ label: "arXiv 搜索", url: "https://arxiv.org/search/" }]
+        },
+        {
+          id: "lit-2",
+          title: "精读并拆解一篇文献",
+          detail: "按问题、方法、实验、结论、局限写一页阅读卡片；把文中的主张与证据对应起来，标出尚未看懂的术语。",
+          minutes: 240,
+          tip: "先自己概括，再用 AI 辅助解释难点，并回原文核对",
+          resources: []
+        },
+        {
+          id: "lit-3",
+          title: "用 Zotero 管理和引用资料",
+          detail: "建立 AI Agent 文献库，保存资料及 PDF、添加标签和笔记；在一段自己的文字中插入准确引用并生成参考文献。",
+          minutes: 180,
+          tip: "引用前核对作者、标题、年份与原文出处",
+          resources: [{ label: "Zotero 入门指南", url: "https://www.zotero.org/support/quick_start_guide" }]
+        },
+        {
+          id: "lit-4",
+          title: "把文献变成可用的方案",
+          detail: "比较 2 篇资料的思路，写出各自适用场景，并选一个方法做小实验或项目设计；附上来源链接和自己的判断。",
+          minutes: 240,
+          tip: "最终产出是一页带引用的方案，不只是论文摘要",
+          resources: []
         }
       ]
     },
     {
       id: "p1",
-      title: "阶段 1 · Python 与数据处理",
-      goal: "能读懂、能改、能独立写出 50 行左右的数据处理脚本。",
+      title: "阶段 3 · Python 基础",
+      goal: "能独立写出处理文件、调用接口的短脚本，为 Agent 开发做准备。",
       tasks: [
         {
           id: "p1-1",
           title: "Python 基础语法过关",
-          detail: "变量、列表/字典、if/for、函数定义、字符串格式化。判断标准：不看资料能写出「统计一段文本里每个词出现的次数」。",
+          detail: "先安装 Python 并确认版本，再学变量、列表/字典、if/for、函数定义、字符串格式化。判断标准：不看资料能写出「统计一段文本里每个词出现的次数」。",
           minutes: 600,
           tip: "遇到不懂的语法，让 DeepSeek 用「对比表格」解释，比自己翻文档快",
           resources: [{ label: "Python 官方教程（中文）", url: "https://docs.python.org/zh-cn/3/tutorial/" }]
@@ -82,42 +156,148 @@ window.CURRICULUM = {
           resources: [{ label: "venv 官方文档", url: "https://docs.python.org/zh-cn/3/library/venv.html" }]
         },
         {
-          id: "p1-3",
-          title: "NumPy：数组与向量化运算",
-          detail: "理解 shape、广播、索引切片、矩阵乘法、聚合函数。这一步是后面所有数学和深度学习的地基。",
+          id: "py-json",
+          title: "用 Python 处理 JSON 与接口数据",
+          detail: "理解列表和字典的嵌套结构，会读写 JSON，并能调用一个公开 HTTP API、解析响应和处理请求失败。",
           minutes: 300,
-          tip: "同一件事分别用 for 循环和 numpy 写一遍，感受向量化的差距",
-          resources: [{ label: "NumPy 快速入门", url: "https://numpy.org/doc/stable/user/absolute_beginners.html" }]
+          tip: "把接口响应保存成 JSON，再从中提取 3 个有用字段",
+          resources: [{ label: "Python json 文档", url: "https://docs.python.org/zh-cn/3/library/json.html" }]
         },
         {
-          id: "p1-4",
-          title: "pandas：读数据、筛数据、聚合",
-          detail: "read_csv、行列筛选、缺失值处理、groupby 分组统计、merge 合并表。真实数据 90% 的时间花在这一步。",
-          minutes: 420,
-          tip: "找一份你真正关心的数据（账单、游戏记录、天气），不是教程里的示例数据",
-          resources: [{ label: "pandas 10 分钟入门", url: "https://pandas.pydata.org/docs/user_guide/10min.html" }]
-        },
-        {
-          id: "p1-5",
-          title: "matplotlib：把数据画出来",
-          detail: "折线图、柱状图、散点图、直方图，会加标题和轴标签。能画图才看得见规律。",
+          id: "py-modules",
+          title: "掌握模块、包与依赖管理",
+          detail: "把脚本拆成多个函数与模块；用虚拟环境安装第三方库，保存依赖，并在新环境中重新跑通。",
           minutes: 240,
-          tip: "中文字体显示成方框时，直接把报错和代码丢给 agent 让它修",
-          resources: [{ label: "Matplotlib 教程", url: "https://matplotlib.org/stable/tutorials/index.html" }]
+          tip: "将你的练习项目复制到新目录，检查能否按 README 重建环境",
+          resources: [{ label: "Python 模块教程", url: "https://docs.python.org/zh-cn/3/tutorial/modules.html" }]
         },
         {
-          id: "p1-6",
-          title: "小项目：一份真实 CSV 的完整分析",
-          detail: "从下载数据到输出结论：清洗 → 计算 3 个指标 → 画 3 张图 → 写 200 字结论。做完这个，阶段 1 才算真的过。",
+          id: "py-debug",
+          title: "调试、日志与简单测试",
+          detail: "能读 traceback 定位报错，用打印或调试器检查变量，用 logging 留下关键步骤，并为一个函数写最小测试。",
+          minutes: 240,
+          tip: "先解释错误发生在哪一行和为什么，再请 AI 帮你复核",
+          resources: [{ label: "Python unittest 文档", url: "https://docs.python.org/zh-cn/3/library/unittest.html" }]
+        },
+        {
+          id: "py-project",
+          title: "小项目：文献资料整理脚本",
+          detail: "读取自己整理的文献 JSON 或 CSV，检查缺失字段，按主题筛选并输出一份 Markdown 清单；附 README 和使用示例。",
           minutes: 360,
-          tip: "让 Trae 或 GPT 帮你搭骨架，但每一行代码你都要能解释它干嘛",
+          tip: "把代码放进 GitHub 练习仓库，确保别人按 README 能运行",
+          resources: []
+        }
+      ]
+    },
+    {
+      id: "p6",
+      title: "阶段 4 · AI Agent 入门与应用",
+      goal: "用 Python 调用模型、接入工具、验证结果，做出能完成多步任务的 Agent。",
+      tasks: [
+        {
+          id: "p6-1",
+          title: "第一次调用大模型 API",
+          detail: "用 Python 调用 DeepSeek API 完成一次问答，理解 API key 怎么保管、token 怎么计费、超时和重试怎么处理。",
+          minutes: 240,
+          tip: "API key 只放在环境变量里，绝不写进代码或提交到 GitHub",
+          resources: [{ label: "DeepSeek API 文档", url: "https://api-docs.deepseek.com/zh-cn/" }]
+        },
+        {
+          id: "p6-2",
+          title: "Prompt 工程：让输出稳定可用",
+          detail: "系统提示词、few-shot 示例、要求输出 JSON、明确角色和约束。目标：同一个提示词连续跑 10 次，结果格式都一致。",
+          minutes: 300,
+          tip: "写完提示词后，用你的 agent 帮你挑毛病，再改一版对比",
+          resources: [{ label: "Prompt Engineering Guide（中文）", url: "https://www.promptingguide.ai/zh" }]
+        },
+        {
+          id: "p6-3",
+          title: "流式输出与工具调用",
+          detail: "流式输出让界面边生成边显示；函数调用让模型能查数据库、算数、发请求。这是从「聊天」走向「应用」的分水岭。",
+          minutes: 360,
+          tip: "先让它算一道它算不准的数学题，再给它一个计算器工具，对比差别",
+          resources: []
+        },
+        {
+          id: "p6-4",
+          title: "做一套 RAG 问答（检索增强）",
+          detail: "文档切分 → 生成 embedding → 存入向量库 → 检索相关片段 → 拼进提示词回答，并且标出答案出处。用你自己的笔记或资料当知识库。",
+          minutes: 600,
+          tip: "先搞清「检索不准」和「模型不听话」是两类问题，调法完全不同",
+          resources: [
+            { label: "LangChain 文档", url: "https://python.langchain.com/docs/introduction/" },
+            { label: "LlamaIndex 文档", url: "https://docs.llamaindex.ai/" }
+          ]
+        },
+        {
+          id: "p6-5",
+          title: "给应用搭一个评估集",
+          detail: "准备 20 条有标准答案的测试问题，每次改完提示词或换模型就自动跑一遍打分。没有评估，优化全靠感觉。",
+          minutes: 300,
+          tip: "哪怕只有 20 条，也能挡住大部分「改了这里坏了那里」的问题",
+          resources: []
+        },
+        {
+          id: "p6-6",
+          title: "从问答升级到 Agent",
+          detail: "让模型自己决定调用哪些工具、分几步完成任务，并处理中间失败。这里正好对照你在用的 GPT / WorkBuddy / Trae，看它们是怎么做决策的。",
+          minutes: 540,
+          tip: "给你的 agent 写 3 个工具函数，让它完成一个需要两步以上推理的任务",
+          resources: [{ label: "Model Context Protocol", url: "https://modelcontextprotocol.io/" }]
+        }
+      ]
+    },
+    {
+      id: "p7",
+      title: "阶段 5 · Agent 项目与作品集",
+      goal: "把学过的东西变成一个别人能点开看的东西。",
+      tasks: [
+        {
+          id: "p7-1",
+          title: "项目 A：个人知识库问答",
+          detail: "把阶段 6 的 RAG 做成能长期用的工具：导入自己的文档、可以更新知识库、答案带出处。这是最能体现你学习成果的项目。",
+          minutes: 900,
+          tip: "先做一个只能问 10 个问题的糙版本，跑通再加功能",
+          resources: []
+        },
+        {
+          id: "p7-2",
+          title: "项目 B：一个自动化小助手",
+          detail: "选一件你每周都要重复做的事（整理文件、汇总信息、生成周报），做成一条自动化流程，用 agent 串起来。",
+          minutes: 720,
+          tip: "衡量标准很简单：这个工具你下周还会继续用吗？",
+          resources: []
+        },
+        {
+          id: "p7-3",
+          title: "项目 C：把完整代码整理上 GitHub",
+          detail: "建仓库、写 README（项目做什么、怎么跑起来、截图）、清理密钥和无关文件。能跑起来的代码才叫作品。",
+          minutes: 300,
+          tip: "README 里写清「我遇到什么问题、怎么解决的」，这是面试和展示的关键",
+          resources: [{ label: "GitHub 新手文档", url: "https://docs.github.com/zh/get-started" }]
+        },
+        {
+          id: "p7-4",
+          title: "写 3 篇技术总结",
+          detail: "每篇讲清一个你真正踩过的坑（比如：为什么我的 RAG 检索总是不准）。输出是最好的检验，也能让别人看到你。",
+          minutes: 480,
+          tip: "先让 DeepSeek 帮你列提纲，正文必须自己写",
+          resources: []
+        },
+        {
+          id: "p7-5",
+          title: "复盘并更新自己的路线图",
+          detail: "回看全部日志和笔记：哪部分学得最快、哪部分最痛苦、下三个月主攻什么。然后回来修改这份路线，把它变成你自己的版本。",
+          minutes: 180,
+          tip: "把结论写进设置页的档案里，或者新建一条日志记下来",
           resources: []
         }
       ]
     },
     {
       id: "p2",
-      title: "阶段 2 · 数学基础（够用就行）",
+      title: "选修专题 · 数学基础（够用就行）",
+      optional: true,
       goal: "不用学完整本教材，只要能在公式里看出「这是在算什么」。",
       tasks: [
         {
@@ -156,7 +336,8 @@ window.CURRICULUM = {
     },
     {
       id: "p3",
-      title: "阶段 3 · 机器学习入门",
+      title: "选修专题 · 机器学习入门",
+      optional: true,
       goal: "会用 scikit-learn 完整跑通一次「训练 → 评估 → 改进」。",
       tasks: [
         {
@@ -211,7 +392,8 @@ window.CURRICULUM = {
     },
     {
       id: "p4",
-      title: "阶段 4 · 深度学习与 PyTorch",
+      title: "选修专题 · 深度学习与 PyTorch",
+      optional: true,
       goal: "能自己写出训练循环，能把模型跑起来并解释结果。",
       tasks: [
         {
@@ -266,7 +448,8 @@ window.CURRICULUM = {
     },
     {
       id: "p5",
-      title: "阶段 5 · Transformer 与 LLM 原理",
+      title: "选修专题 · Transformer 与 LLM 原理",
+      optional: true,
       goal: "知道大模型内部在干什么，而不是只会调 API。",
       tasks: [
         {
@@ -324,111 +507,7 @@ window.CURRICULUM = {
           resources: [{ label: "Ollama 官网", url: "https://ollama.com/" }]
         }
       ]
-    },
-    {
-      id: "p6",
-      title: "阶段 6 · LLM 应用开发",
-      goal: "能做出真正有用的 LLM 应用，而不只是聊天窗口。",
-      tasks: [
-        {
-          id: "p6-1",
-          title: "第一次调用大模型 API",
-          detail: "用 Python 调用 DeepSeek API 完成一次问答，理解 API key 怎么保管、token 怎么计费、超时和重试怎么处理。",
-          minutes: 240,
-          tip: "API key 只放在环境变量里，绝不写进代码或提交到 GitHub",
-          resources: [{ label: "DeepSeek API 文档", url: "https://api-docs.deepseek.com/zh-cn/" }]
-        },
-        {
-          id: "p6-2",
-          title: "Prompt 工程：让输出稳定可用",
-          detail: "系统提示词、few-shot 示例、要求输出 JSON、明确角色和约束。目标：同一个提示词连续跑 10 次，结果格式都一致。",
-          minutes: 300,
-          tip: "写完提示词后，用你的 agent 帮你挑毛病，再改一版对比",
-          resources: [{ label: "Prompt Engineering Guide（中文）", url: "https://www.promptingguide.ai/zh" }]
-        },
-        {
-          id: "p6-3",
-          title: "流式输出与工具调用",
-          detail: "流式输出让界面边生成边显示；函数调用让模型能查数据库、算数、发请求。这是从「聊天」走向「应用」的分水岭。",
-          minutes: 360,
-          tip: "先让它算一道它算不准的数学题，再给它一个计算器工具，对比差别",
-          resources: []
-        },
-        {
-          id: "p6-4",
-          title: "做一套 RAG 问答（检索增强）",
-          detail: "文档切分 → 生成 embedding → 存入向量库 → 检索相关片段 → 拼进提示词回答，并且标出答案出处。用你自己的笔记或资料当知识库。",
-          minutes: 600,
-          tip: "先搞清「检索不准」和「模型不听话」是两类问题，调法完全不同",
-          resources: [
-            { label: "LangChain 文档", url: "https://python.langchain.com/docs/introduction/" },
-            { label: "LlamaIndex 文档", url: "https://docs.llamaindex.ai/" }
-          ]
-        },
-        {
-          id: "p6-5",
-          title: "给应用搭一个评估集",
-          detail: "准备 20 条有标准答案的测试问题，每次改完提示词或换模型就自动跑一遍打分。没有评估，优化全靠感觉。",
-          minutes: 300,
-          tip: "哪怕只有 20 条，也能挡住大部分「改了这里坏了那里」的问题",
-          resources: []
-        },
-        {
-          id: "p6-6",
-          title: "从问答升级到 Agent",
-          detail: "让模型自己决定调用哪些工具、分几步完成任务，并处理中间失败。这里正好对照你在用的 GPT / WorkBuddy / Trae，看它们是怎么做决策的。",
-          minutes: 540,
-          tip: "给你的 agent 写 3 个工具函数，让它完成一个需要两步以上推理的任务",
-          resources: [{ label: "Model Context Protocol", url: "https://modelcontextprotocol.io/" }]
-        }
-      ]
-    },
-    {
-      id: "p7",
-      title: "阶段 7 · 项目实战与作品集",
-      goal: "把学过的东西变成一个别人能点开看的东西。",
-      tasks: [
-        {
-          id: "p7-1",
-          title: "项目 A：个人知识库问答",
-          detail: "把阶段 6 的 RAG 做成能长期用的工具：导入自己的文档、可以更新知识库、答案带出处。这是最能体现你学习成果的项目。",
-          minutes: 900,
-          tip: "先做一个只能问 10 个问题的糙版本，跑通再加功能",
-          resources: []
-        },
-        {
-          id: "p7-2",
-          title: "项目 B：一个自动化小助手",
-          detail: "选一件你每周都要重复做的事（整理文件、汇总信息、生成周报），做成一条自动化流程，用 agent 串起来。",
-          minutes: 720,
-          tip: "衡量标准很简单：这个工具你下周还会继续用吗？",
-          resources: []
-        },
-        {
-          id: "p7-3",
-          title: "项目 C：把完整代码整理上 GitHub",
-          detail: "建仓库、写 README（项目做什么、怎么跑起来、截图）、清理密钥和无关文件。能跑起来的代码才叫作品。",
-          minutes: 300,
-          tip: "README 里写清「我遇到什么问题、怎么解决的」，这是面试和展示的关键",
-          resources: [{ label: "GitHub 新手文档", url: "https://docs.github.com/zh/get-started" }]
-        },
-        {
-          id: "p7-4",
-          title: "写 3 篇技术总结",
-          detail: "每篇讲清一个你真正踩过的坑（比如：为什么我的 RAG 检索总是不准）。输出是最好的检验，也能让别人看到你。",
-          minutes: 480,
-          tip: "先让 DeepSeek 帮你列提纲，正文必须自己写",
-          resources: []
-        },
-        {
-          id: "p7-5",
-          title: "复盘并更新自己的路线图",
-          detail: "回看全部日志和笔记：哪部分学得最快、哪部分最痛苦、下三个月主攻什么。然后回来修改这份路线，把它变成你自己的版本。",
-          minutes: 180,
-          tip: "把结论写进设置页的档案里，或者新建一条日志记下来",
-          resources: []
-        }
-      ]
     }
   ]
 };
+
