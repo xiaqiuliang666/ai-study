@@ -493,6 +493,9 @@ code { font-family: var(--mono); font-size: 0.85em; background: var(--surface-3)
 .field-row .field { flex: 1; min-width: 0; }
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field > span { font-size: 12.5px; color: var(--text-2); }
+.input-action-row { display: flex; align-items: stretch; gap: 8px; min-width: 0; }
+.input-action-row input { flex: 1; min-width: 0; }
+.token-visibility { flex: none; min-width: 68px; padding: 8px 12px; }
 
 .field input, .field textarea, .field select {
   font-family: inherit; font-size: 16px;
@@ -680,3 +683,4 @@ code { font-family: var(--mono); font-size: 0.85em; background: var(--surface-3)
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+

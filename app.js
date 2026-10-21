@@ -613,7 +613,7 @@
 
   function syncHint() {
     if (sync.mode === "gist") {
-      return "数据存在你 GitHub 账号的一个私密 Gist 里，和这台电脑开不开机无关。所有设备都要填同一个 Token 和 Gist ID；页面打开时约每 30 秒检查一次新数据。Token 只保存在本设备浏览器里。";
+      return "数据存在你 GitHub 账号的一个私密 Gist 里，和电脑开不开机无关。所有设备填同一个 Gist ID 即可；每台设备可使用各自的 Token。页面打开且处于前台时约每 30 秒检查一次新数据。Token 只保存在本设备浏览器里。";
     }
     if (sync.mode === "custom") {
       return "数据存在你自己的接口上。接口需要支持 GET 读取、POST 写入 {state: ...}，规则和本机服务器的 /api/state 相同。";
@@ -622,7 +622,7 @@
       return "数据存在运行服务器的这台电脑上，电脑关机后手机就打不开了。想彻底摆脱电脑，把同步方式改成 GitHub Gist。";
     }
     if (syncCfg.mode === "gist" && !syncCfg.gistToken.trim()) {
-      return "填好 Token 后点「保存并同步」。第一次同步会自动创建一个私密 Gist，并把 ID 填到上面。";
+      return "还没有填入 Token。若另一台设备已经创建 Gist，请填入它的 Gist ID；首次设置的设备可以留空，网页会创建 Gist 并显示 ID。Token 需要 Gists 写入权限。";
     }
     if (syncCfg.mode === "server") {
       return "没找到本机服务器。要么先运行 start-server.bat，要么把同步方式改成 GitHub Gist，这样电脑关机也能用。";
@@ -639,7 +639,13 @@
       detail.textContent = modeLabel() + " 同步失败：" + sync.message;
       detail.className = "sync-line is-error";
     } else if (sync.mode === "off") {
-      detail.textContent = "未启用同步：数据只在这台设备的浏览器里";
+      if (syncCfg.mode === "gist" && !syncCfg.gistToken.trim()) {
+        detail.textContent = "尚未连接 GitHub Gist：请填写 Token；当前进度仍保存在本机";
+      } else if (syncCfg.mode === "off") {
+        detail.textContent = "同步已关闭：数据只在这台设备的浏览器里";
+      } else {
+        detail.textContent = "尚未配置可用的同步方式：当前进度只保存在本机";
+      }
       detail.className = "sync-line is-off";
     } else {
       detail.textContent = "已连接 " + modeLabel() + (sync.lastAt ? " · 上次同步 " + clockTime(sync.lastAt) : "");
@@ -653,7 +659,9 @@
     sync.mode = await resolveMode();
     renderSyncPanel();
     if (sync.mode === "off") {
-      setSyncStatus(syncCfg.mode === "off" ? "同步已关闭" : "本地模式（仅此设备）", "");
+      if (syncCfg.mode === "off") setSyncStatus("同步已关闭", "");
+      else if (syncCfg.mode === "gist" && !syncCfg.gistToken.trim()) setSyncStatus("等待 GitHub Token", "");
+      else setSyncStatus("本地模式（仅此设备）", "");
       return;
     }
     await syncOnce("start", true);
@@ -1409,10 +1417,28 @@
       showToast("已保存");
     });
 
+    $("toggleGistToken").addEventListener("click", function () {
+      const input = $("gistToken");
+      const button = $("toggleGistToken");
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      button.textContent = show ? "隐藏" : "显示";
+      button.setAttribute("aria-pressed", show ? "true" : "false");
+      button.setAttribute("aria-label", show ? "隐藏 Token" : "显示 Token");
+    });
+
     $("syncMode").addEventListener("change", async function (event) {
       syncCfg.mode = event.target.value;
       saveSyncCfg();
       renderSyncFields();
+      if (syncCfg.mode === "gist" && !syncCfg.gistToken.trim()) {
+        sync.mode = "off";
+        sync.status = "idle";
+        renderSyncPanel();
+        setSyncStatus("等待 GitHub Token", "");
+        showToast("已选择 GitHub Gist；填入 Token 后点「保存并同步」");
+        return;
+      }
       await startSync();
       showToast(sync.mode === "off" ? "当前是本地模式" : "已切换到 " + modeLabel());
     });
@@ -1427,7 +1453,13 @@
       if (sync.status === "ok") {
         showToast("同步成功");
       } else if (sync.mode === "off") {
-        showToast("配置已保存，但没找到可用的同步方式");
+        if (syncCfg.mode === "gist" && !syncCfg.gistToken.trim()) {
+          showToast("请先粘贴 GitHub Token；进度仍保存在本机");
+        } else if (syncCfg.mode === "custom" && !syncCfg.endpoint.trim()) {
+          showToast("请先填写接口地址；进度仍保存在本机");
+        } else {
+          showToast("没找到可用同步方式；进度仍保存在本机");
+        }
       } else {
         showToast("同步失败：" + sync.message);
       }
@@ -1440,7 +1472,10 @@
         await syncOnce("manual", true);
       }
       if (sync.status === "ok") showToast("同步完成");
-      else if (sync.mode === "off") showToast("没有可用的同步方式");
+      else if (sync.mode === "off") {
+        if (syncCfg.mode === "gist" && !syncCfg.gistToken.trim()) showToast("请先粘贴 GitHub Token");
+        else showToast("没有可用的同步方式；进度仍保存在本机");
+      }
       else showToast("同步失败：" + sync.message);
     });
 

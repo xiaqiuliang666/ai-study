@@ -221,14 +221,18 @@
 
       <div id="gistFields" class="sync-fields" hidden>
         <label class="field">
-          <span>GitHub Token（权限只勾 gist）</span>
-          <input id="gistToken" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_... 或 ghp_...">
+          <span>GitHub Token（Gists 读写权限）</span>
+          <div class="input-action-row">
+            <input id="gistToken" type="password" autocomplete="off" spellcheck="false" placeholder="粘贴 github_pat_... 或 ghp_...">
+            <button class="btn token-visibility" type="button" id="toggleGistToken" aria-label="显示 Token" aria-pressed="false">显示</button>
+          </div>
         </label>
         <label class="field">
-          <span>Gist ID（留空会自动创建）</span>
-          <input id="gistId" type="text" autocomplete="off" spellcheck="false" placeholder="首次同步留空即可">
+          <span>Gist ID（已有 Gist 就填相同 ID）</span>
+          <input id="gistId" type="text" autocomplete="off" spellcheck="false" placeholder="首次创建 Gist 的设备可留空">
         </label>
         <p class="muted small">
+          每台设备可用不同 Token，但必须指向同一个 Gist ID。细粒度 Token 只需给 Gists 写入权限；经典 Token 只勾 gist。<br>
           创建地址：
           <a class="res-link" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">细粒度 Token</a>
           或
@@ -313,3 +317,4 @@
 <script src="app.js"></script>
 </body>
 </html>
+
