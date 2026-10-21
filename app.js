@@ -1249,13 +1249,13 @@
     $("themeToggle").textContent = theme === "dark" ? "☀️" : "🌙";
     $("themeToggle").setAttribute("aria-label", theme === "dark" ? "切换到浅色模式" : "切换到深色模式");
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", theme === "dark" ? "#0a0b10" : "#f6f7fb");
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#0b1117" : "#f4f7fb");
   }
 
   function initTheme() {
     let saved = null;
     try { saved = localStorage.getItem(THEME_KEY); } catch (err) { saved = null; }
-    applyTheme(saved || "dark");
+    applyTheme(saved || "light");
   }
 
   /* ---------- 事件绑定 ---------- */
