@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="cartoon.css?v=hub-1">
 <link rel="stylesheet" href="hub.css?v=hub-1">
 <link rel="stylesheet" href="cet4.css?v=hub-1">
+<link rel="stylesheet" href="knowledge.css?v=resources-1">
 </head>
 <body>
 
@@ -41,6 +42,7 @@
   <nav class="tabs-desktop" role="tablist" aria-label="主导航">
     <button class="tab" type="button" role="tab" data-tab="home" aria-controls="view-home" aria-selected="true"><span class="nav-symbol" aria-hidden="true">🏡</span>学习总览</button>
     <button class="tab" type="button" role="tab" data-tab="planner" aria-controls="view-planner" aria-selected="false"><span class="nav-symbol" aria-hidden="true">📅</span>计划与专注</button>
+    <button class="tab" type="button" role="tab" data-tab="library" aria-controls="view-library" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🔬</span>知识与科研资料</button>
     <button class="tab" type="button" role="tab" data-tab="cet4" aria-controls="view-cet4" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🇬🇧</span>四级备考</button>
     <button class="tab" type="button" role="tab" data-tab="roadmap" aria-controls="view-roadmap" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🧭</span>AI 学习路线</button>
     <button class="tab" type="button" role="tab" data-tab="notes" aria-controls="view-notes" aria-selected="false"><span class="nav-symbol" aria-hidden="true">📒</span>笔记与错题</button>
@@ -64,10 +66,12 @@
   <section id="view-planner" class="view" role="tabpanel" hidden><div id="hubPlanner"></div></section>
   <section id="view-cet4" class="view" role="tabpanel" hidden><div id="cet4Mount"></div></section>
   <section id="view-notes" class="view" role="tabpanel" hidden><div id="hubNotes"></div></section>
+  <section id="view-library" class="view" role="tabpanel" hidden><div id="knowledgeMount"></div></section>
 
   <section id="view-more" class="view" role="tabpanel" hidden>
     <div class="view-head"><h2>🧰 我的学习工具箱</h2><p class="view-sub">课程、资料、日志与数据设置，都收在这里。</p></div>
     <div class="tool-grid">
+      <button class="tool-card" type="button" data-tab="library"><span aria-hidden="true">🔬</span><strong>知识与科研资料库</strong><small>文献阅读、科研写作、监测案例与基础知识</small></button>
       <button class="tool-card" type="button" data-tab="roadmap"><span aria-hidden="true">🧭</span><strong>AI 学习路线</strong><small>Git、文献、Python 与 Agent 项目</small></button>
       <button class="tool-card" type="button" data-tab="glossary"><span aria-hidden="true">📚</span><strong>AI 热词百科</strong><small>概念解释、区别与关联词</small></button>
       <button class="tool-card" type="button" data-tab="graph"><span aria-hidden="true">🤖</span><strong>模型与 Agent 图谱</strong><small>查找适合任务的工具</small></button>
@@ -354,9 +358,14 @@
 <script src="curriculum.js"></script>
 <script src="glossary.js"></script>
 <script src="models.js"></script>
-<script src="cet4-content.js?v=hub-1"></script>
-<script src="learning-hub.js?v=hub-1"></script>
-<script src="cet4.js?v=hub-1"></script>
-<script src="app.js?v=hub-1"></script>
+<script src="cet4-content.js?v=resources-1"></script>
+<script src="learning-hub.js?v=resources-1"></script>
+<script src="cet4.js?v=resources-1"></script>
+<script src="knowledge-graduate.js?v=resources-1"></script>
+<script src="knowledge-foundations.js?v=resources-1"></script>
+<script src="knowledge-agent.js?v=resources-1"></script>
+<script src="knowledge-english.js?v=resources-1"></script>
+<script src="knowledge.js?v=resources-1"></script>
+<script src="app.js?v=resources-1"></script>
 </body>
 </html>

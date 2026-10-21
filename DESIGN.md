@@ -23,6 +23,14 @@
 
 持久化沿用原有本地存储，在 `study` 映射里按条目记录修改时间及删除标记，通过同一同步入口保存；GitHub Gist 使用额外的 `ai-study-hub.json` 文件兼容旧版设备。专注计时运行态仅保存在当前标签页的 sessionStorage，完成后的时长进入同步记录。
 
+## 知识与科研资料库
+
+新增 39 篇站内原创中文指南，使用六类学科书架、全文搜索和来源导航组织内容。阅读页包含目录、代码或例子、动手练习、参考思路与延伸资料。收藏和已学保存到原有同步记录，计划与笔记使用既有模块。已学操作记录活动，不虚增学习时长。
+
+根据研一电子信息的学习背景，首页突出文献阅读、数据小实验和科研写作，加入边坡监测、雨量测量的入门案例。四周安排为可调整的学习建议，候选问题以与导师讨论及实际数据条件为前提。WMO 资料明确标注历史版本；合成示例、教学参数、待完成实验和已验证结果分别写清。
+
+新领域资料使用 [USGS 监测案例](https://www.usgs.gov/programs/landslide-hazards/science/real-time-monitoring-potential-landslides)、[NOAA 托管 WMO 2008 历史版](https://www.weather.gov/media/epz/mesonet/CWOP-WMO8.pdf)、[IEEE 写作结构](https://journals.ieeeauthorcenter.ieee.org/create-your-ieee-journal-article/create-the-text-of-your-article/structure-your-article/)及[可复现性指导](https://journals.ieeeauthorcenter.ieee.org/create-your-ieee-journal-article/research-reproducibility/)。其余每篇保留 Git、GitHub、Python、Zotero、Hugging Face、MCP、LangGraph、原论文和英语教学机构的一手入口。
+
 ## 插画
 
 使用内置 image_gen 生成。原始图保存于 `assets/doraemon-sky-original.png`；网站加载压缩版 `assets/doraemon-sky.jpg`（1536 × 1024，约 229 KB）。原图未随网页上传。

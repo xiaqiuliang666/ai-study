@@ -235,14 +235,14 @@
       const item = state.study[key];
       if (!item || item.deleted) return;
       const kind = key.split(":")[0];
-      if (["checkin", "plan", "note", "focus", "practice", "word", "cet4-task", "cet4-writing", "cet4-translation"].indexOf(kind) === -1) return;
-      if ((kind === "plan" || kind === "cet4-task") && !item.done) return;
+      if (["checkin", "plan", "note", "focus", "practice", "word", "cet4-task", "cet4-writing", "cet4-translation", "knowledge"].indexOf(kind) === -1) return;
+      if ((kind === "plan" || kind === "cet4-task" || kind === "knowledge") && !item.done) return;
       let date = dateFromStamp(item.updatedAt);
       if (kind === "checkin" || kind === "focus" || kind === "practice") date = item.date || date;
       else if (kind === "word") date = item.lastReviewedDate || date;
       else if (item.doneAt) date = item.doneAt;
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
-      const titles = { checkin: "完成每日打卡", plan: "完成计划", note: "整理学习笔记", focus: "完成专注学习", practice: "完成四级练习", word: "复习四级单词", "cet4-task": "完成四级阶段任务", "cet4-writing": "练习四级写作", "cet4-translation": "练习四级翻译" };
+      const titles = { checkin: "完成每日打卡", plan: "完成计划", note: "整理学习笔记", focus: "完成专注学习", practice: "完成四级练习", word: "复习四级单词", "cet4-task": "完成四级阶段任务", "cet4-writing": "练习四级写作", "cet4-translation": "练习四级翻译", knowledge: "学习知识指南" };
       const minutes = kind === "focus" || kind === "practice" ? Math.max(0, Math.min(1440, Number(item.minutes) || 0)) : 0;
       items.push({ date: date, sort: String(item.updatedAt || date), title: titles[kind] + (item.title ? "：" + item.title : ""), minutes: minutes });
     });
@@ -1155,7 +1155,7 @@
 
   /* ---------- 总渲染 ---------- */
   function studyModules() {
-    return [window.LearningHub, window.CET4Learning].filter(function (module) { return module && typeof module.render === "function"; });
+    return [window.LearningHub, window.CET4Learning, window.KnowledgeLibrary].filter(function (module) { return module && typeof module.render === "function"; });
   }
 
   function createStudyBridge() {
@@ -1351,7 +1351,7 @@
   }
 
   /* ---------- 标签页 ---------- */
-  const TABS = ["home", "planner", "cet4", "roadmap", "notes", "glossary", "graph", "log", "stats", "settings", "more"];
+  const TABS = ["home", "planner", "cet4", "roadmap", "library", "notes", "glossary", "graph", "log", "stats", "settings", "more"];
 
   function switchTab(name) {
     TABS.forEach(function (key) {
@@ -1366,7 +1366,7 @@
       }
     });
     document.querySelectorAll("[data-tab]").forEach(function (btn) {
-      const active = btn.dataset.tab === name || (btn.dataset.tab === "more" && ["roadmap", "glossary", "graph", "log", "stats", "settings"].indexOf(name) !== -1);
+      const active = btn.dataset.tab === name || (btn.dataset.tab === "more" && ["roadmap", "library", "glossary", "graph", "log", "stats", "settings"].indexOf(name) !== -1);
       btn.classList.toggle("is-active", active);
       btn.setAttribute("aria-selected", active ? "true" : "false");
     });
@@ -1650,7 +1650,8 @@
     window.STUDY_STORE = createStudyBridge();
     studyModules().forEach(function (module) { if (typeof module.init === "function") module.init(window.STUDY_STORE); });
     bindEvents();
-    switchTab("home");
+    const requestedTab = window.location && new URLSearchParams(window.location.search).get("tab");
+    switchTab(TABS.indexOf(requestedTab) !== -1 ? requestedTab : "home");
     renderAll();
 
     window.addEventListener("beforeunload", function () { saveLocalState(); });
