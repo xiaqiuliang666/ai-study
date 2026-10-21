@@ -1249,7 +1249,7 @@
     $("themeToggle").textContent = theme === "dark" ? "☀️" : "🌙";
     $("themeToggle").setAttribute("aria-label", theme === "dark" ? "切换到浅色模式" : "切换到深色模式");
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", theme === "dark" ? "#0b1117" : "#f4f7fb");
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#102a40" : "#eaf8ff");
   }
 
   function initTheme() {
@@ -1549,4 +1549,3 @@
     boot();
   }
 })();
-

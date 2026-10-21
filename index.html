@@ -3,15 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f4f7fb">
+<meta name="theme-color" content="#eaf8ff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AI 学习站">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
-<title>AI 学习站 · 路线 / 热词 / 模型图谱</title>
-<link rel="stylesheet" href="styles.css">
+<title>AI 学习站 · 打开知识的任意门</title>
+<link rel="preload" as="image" href="assets/doraemon-sky.jpg">
+<link rel="stylesheet" href="styles.css?v=cartoon-1">
+<link rel="stylesheet" href="cartoon.css?v=cartoon-1">
 </head>
 <body>
 
@@ -19,9 +21,11 @@
   <div class="topbar-inner">
     <div class="brand">
       <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 3v3M12 18v3M4.2 7.5l2.6 1.5M17.2 15l2.6 1.5M4.2 16.5l2.6-1.5M17.2 9l2.6-1.5"></path>
-          <circle cx="12" cy="12" r="3.4"></circle>
+        <svg viewBox="0 0 32 32" fill="none" stroke="#174d73" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 10h16v4c0 7-3.5 12-8 12S8 21 8 14z" fill="#ffd05b"></path>
+          <path d="M7 10h18v5H7z" fill="#fff0ae"></path>
+          <circle cx="16" cy="20" r="2.7" fill="#d99b27"></circle>
+          <path d="M16 23v3M14 5h4"/>
         </svg>
       </span>
       <span class="brand-text">
@@ -33,20 +37,37 @@
   </div>
 
   <nav class="tabs-desktop" role="tablist" aria-label="主导航">
-    <button class="tab" type="button" role="tab" data-tab="roadmap" aria-controls="view-roadmap" aria-selected="true">学习路线</button>
-    <button class="tab" type="button" role="tab" data-tab="glossary" aria-controls="view-glossary" aria-selected="false">热词百科</button>
-    <button class="tab" type="button" role="tab" data-tab="graph" aria-controls="view-graph" aria-selected="false">模型图谱</button>
-    <button class="tab" type="button" role="tab" data-tab="log" aria-controls="view-log" aria-selected="false">学习日志</button>
-    <button class="tab" type="button" role="tab" data-tab="stats" aria-controls="view-stats" aria-selected="false">统计</button>
-    <button class="tab" type="button" role="tab" data-tab="settings" aria-controls="view-settings" aria-selected="false">设置</button>
+    <button class="tab" type="button" role="tab" data-tab="roadmap" aria-controls="view-roadmap" aria-selected="true"><span class="nav-symbol" aria-hidden="true">🧭</span>学习路线</button>
+    <button class="tab" type="button" role="tab" data-tab="glossary" aria-controls="view-glossary" aria-selected="false"><span class="nav-symbol" aria-hidden="true">📚</span>热词百科</button>
+    <button class="tab" type="button" role="tab" data-tab="graph" aria-controls="view-graph" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🤖</span>模型图谱</button>
+    <button class="tab" type="button" role="tab" data-tab="log" aria-controls="view-log" aria-selected="false"><span class="nav-symbol" aria-hidden="true">✏️</span>学习日志</button>
+    <button class="tab" type="button" role="tab" data-tab="stats" aria-controls="view-stats" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🏆</span>学习成就</button>
+    <button class="tab" type="button" role="tab" data-tab="settings" aria-controls="view-settings" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🛠️</span>我的设置</button>
   </nav>
+  <aside class="sidebar-note">
+    <span class="note-star" aria-hidden="true">✦</span>
+    <strong>每一步，都算数。</strong>
+    <p>带上好奇心，<br>打开知识的任意门！</p>
+    <span class="pocket-doodle" aria-hidden="true"></span>
+  </aside>
 </header>
 
 <main class="wrap">
 
   <!-- ==================== 学习路线 ==================== -->
   <section id="view-roadmap" class="view" role="tabpanel">
-    <div class="hero">
+    <div class="adventure-banner">
+      <img class="adventure-art" src="assets/doraemon-sky.jpg" alt="哆啦 A 梦戴着竹蜻蜓，在蓝天和云朵间开心地飞翔" width="1536" height="1024" fetchpriority="high">
+      <div class="adventure-copy">
+        <span class="adventure-eyebrow"><span aria-hidden="true">🔔</span> 今天，也有新发现</span>
+        <h1>打开 AI 的任意门<span class="title-spark" aria-hidden="true">✦</span></h1>
+        <p>把大目标拆成小小的一步。<br>和哆啦 A 梦一起，从好奇走向会做。</p>
+        <a class="btn btn-primary adventure-cta" href="#phaseList">开始今天的学习 <span aria-hidden="true">➜</span></a>
+      </div>
+    </div>
+
+    <div class="roadmap-heading"><h2><span aria-hidden="true">🚀</span> 我的学习冒险</h2><span>一步一步，攒满超能力</span></div>
+    <div class="hero" id="study-progress">
       <div class="hero-ring">
         <svg viewBox="0 0 120 120" role="img" aria-labelledby="ringLabel">
           <title id="ringLabel">总体完成度</title>
@@ -284,27 +305,27 @@
 
 <nav class="tabbar" role="tablist" aria-label="主导航">
   <button class="tabbar-btn is-active" type="button" role="tab" data-tab="roadmap" aria-controls="view-roadmap" aria-selected="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V7a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v11"></path><path d="M17 10h2a1 1 0 0 1 1 1v6a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2"></path></svg>
+    <span class="mobile-symbol" aria-hidden="true">🧭</span>
     <span>路线</span>
   </button>
   <button class="tabbar-btn" type="button" role="tab" data-tab="glossary" aria-controls="view-glossary" aria-selected="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5z"></path><path d="M9 7.5h6M9 11h4"></path></svg>
+    <span class="mobile-symbol" aria-hidden="true">📚</span>
     <span>名词</span>
   </button>
   <button class="tabbar-btn" type="button" role="tab" data-tab="graph" aria-controls="view-graph" aria-selected="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.6"></circle><circle cx="18" cy="7" r="2.6"></circle><circle cx="12" cy="18" r="2.6"></circle><path d="M8.2 7.4l7.6-.4M7.1 8.3l3.8 7.4M16.9 9.4l-3.6 6.4"></path></svg>
+    <span class="mobile-symbol" aria-hidden="true">🤖</span>
     <span>图谱</span>
   </button>
   <button class="tabbar-btn" type="button" role="tab" data-tab="log" aria-controls="view-log" aria-selected="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16H5z"></path><path d="M8.5 9h7M8.5 13h5"></path></svg>
+    <span class="mobile-symbol" aria-hidden="true">✏️</span>
     <span>日志</span>
   </button>
   <button class="tabbar-btn" type="button" role="tab" data-tab="stats" aria-controls="view-stats" aria-selected="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"></path><path d="M8 19v-6M12.5 19V8M17 19v-4"></path></svg>
+    <span class="mobile-symbol" aria-hidden="true">🏆</span>
     <span>统计</span>
   </button>
   <button class="tabbar-btn" type="button" role="tab" data-tab="settings" aria-controls="view-settings" aria-selected="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"></path></svg>
+    <span class="mobile-symbol" aria-hidden="true">🛠️</span>
     <span>设置</span>
   </button>
 </nav>
@@ -314,7 +335,6 @@
 <script src="curriculum.js"></script>
 <script src="glossary.js"></script>
 <script src="models.js"></script>
-<script src="app.js"></script>
+<script src="app.js?v=cartoon-1"></script>
 </body>
 </html>
-
