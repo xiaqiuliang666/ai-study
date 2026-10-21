@@ -363,7 +363,7 @@ html[data-theme="dark"] .phase:nth-child(n) { --phase-soft: #244b64; --phase-ink
   .topbar-inner { padding: 4px 3px 25px; margin: 0; flex-wrap: wrap; gap: 20px; }
   .brand-text strong { font-size: 20px; }
   .sync-status { max-width: 146px; }
-  .icon-btn { width: 36px; height: 36px; position: absolute; top: 99px; right: 20px; }
+  .icon-btn { width: 36px; height: 36px; position: static; flex: none; margin-left: auto; }
   .tabs-desktop { display: flex; flex-direction: column; padding: 22px 0 10px; margin: 0; gap: 13px; overflow: visible; }
   .tab { font-size: 15px; gap: 13px; min-height: 56px; padding: 13px 17px; border-radius: 18px; }
   .nav-symbol { width: 28px; text-align: center; font-size: 24px; }
@@ -438,6 +438,24 @@ html[data-theme="dark"] .phase:nth-child(n) { --phase-soft: #244b64; --phase-ink
   .hero-ring-label span { font-size: 10px; }
   .field-row { gap: 9px; }
   .field input, .field textarea, .field select { padding-right: 10px; padding-left: 10px; }
+}
+
+.tool-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px; padding: 4px 0 18px; }
+.tool-card { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; min-width: 0; padding: 21px; text-align: left; border: 2px solid var(--border); border-radius: 23px; background: var(--surface); color: var(--text); box-shadow: var(--shadow); cursor: pointer; font-family: inherit; }
+.tool-card > span { font-size: 31px; }
+.tool-card strong { font-size: 16px; }
+.tool-card small { color: var(--text-2); font-size: 12px; line-height: 1.7; }
+.tool-card:active { transform: translateY(3px); box-shadow: none; }
+@media (min-width: 1100px) {
+  .tabs-desktop { gap: 7px; padding-top: 15px; }
+  .tab { min-height: 45px; padding: 9px 14px; font-size: 14px; }
+  .nav-symbol { font-size: 22px; }
+  .tool-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1100px) and (max-height: 920px) { .sidebar-note { display: none; } }
+@media (max-width: 420px) {
+  .tool-card { padding: 17px 14px; }
+  .tool-card strong { font-size: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

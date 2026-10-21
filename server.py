@@ -21,7 +21,7 @@ import socket
 import sys
 import tempfile
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -76,6 +76,36 @@ def _stamp(entry):
     return str(entry.get("updatedAt") or "")
 
 
+def _study_records(source):
+    """过滤损坏的学习记录，同时兼容还没有 study 的旧版客户端。"""
+    if not isinstance(source, dict):
+        return {}
+    records = {}
+    for key, entry in source.items():
+        if not isinstance(key, str) or key in ("__proto__", "constructor", "prototype"):
+            continue
+        if not isinstance(entry, dict):
+            continue
+        record = dict(entry)
+        record["updatedAt"] = entry.get("updatedAt") if isinstance(entry.get("updatedAt"), str) else ""
+        records[key] = record
+    return records
+
+
+def _study_stamp(entry):
+    """按时间点比较 ISO 时间，避免不同时区偏移的字符串排错顺序。"""
+    value = entry.get("updatedAt", "")
+    if not value:
+        return 0
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed.timestamp()
+    except (ValueError, OverflowError, OSError):
+        return 0
+
+
 def merge_state(stored, incoming):
     """
     把手机/电脑两份数据合并成一份。
@@ -83,6 +113,7 @@ def merge_state(stored, incoming):
     规则简单但够用：
     - 任务、日志条目：按条目的 updatedAt 决定谁新，谁新用谁（所以两边改不同的任务不会互相覆盖）
     - 删除日志：用墓碑记录（logDeleted），比日志条目新就保持删除
+    - 学习中心：按每条记录的 updatedAt 合并，保留 deleted 墓碑，时间相同则删除优先
     - 档案（称呼、开始日期）：谁新用谁
     """
     if not isinstance(stored, dict):
@@ -94,6 +125,7 @@ def merge_state(stored, incoming):
         "version": 1,
         "profile": {},
         "tasks": {},
+        "study": {},
         "log": [],
         "logDeleted": {},
     }
@@ -115,6 +147,20 @@ def merge_state(stored, incoming):
             merged["tasks"][key] = s_entry
         else:
             merged["tasks"][key] = i_entry if _stamp(i_entry) >= _stamp(s_entry) else s_entry
+
+    # --- study（打卡、计划、笔记等独立记录；旧设备缺少此字段时保留已有记录） ---
+    for source in (stored.get("study"), incoming.get("study")):
+        for key, entry in _study_records(source).items():
+            current = merged["study"].get(key)
+            if current is None:
+                merged["study"][key] = entry
+                continue
+            entry_stamp, current_stamp = _study_stamp(entry), _study_stamp(current)
+            if entry_stamp > current_stamp or (
+                entry_stamp == current_stamp
+                and (entry.get("deleted") is True or current.get("deleted") is not True)
+            ):
+                merged["study"][key] = entry
 
     # --- logDeleted（墓碑，取更新的时间） ---
     for source in (stored.get("logDeleted"), incoming.get("logDeleted")):
@@ -148,7 +194,6 @@ def merge_state(stored, incoming):
 
     # --- 根节点时间戳取最大值 ---
     merged["updatedAt"] = max(str(stored.get("updatedAt") or ""), str(incoming.get("updatedAt") or ""))
-    merged["version"] = int(incoming.get("version") or stored.get("version") or 1)
     return merged
 
 

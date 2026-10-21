@@ -1,7 +1,7 @@
 {
-  "name": "AI 学习站",
-  "short_name": "AI 学习站",
-  "description": "AI 学习路线、热词百科、模型与 Agent 图谱，手机电脑共用一份数据",
+  "name": "学习任意门",
+  "short_name": "学习任意门",
+  "description": "AI 与英语四级学习、每日打卡、计划专注、笔记错题和跨设备进度同步",
   "lang": "zh-CN",
   "start_url": "./index.html",
   "scope": "./",

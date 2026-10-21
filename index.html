@@ -6,14 +6,16 @@
 <meta name="theme-color" content="#eaf8ff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="AI 学习站">
+<meta name="apple-mobile-web-app-title" content="学习任意门">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
-<title>AI 学习站 · 打开知识的任意门</title>
+<title>学习任意门 · AI / 四级 / 每日计划</title>
 <link rel="preload" as="image" href="assets/doraemon-sky.jpg">
 <link rel="stylesheet" href="styles.css?v=cartoon-1">
-<link rel="stylesheet" href="cartoon.css?v=cartoon-1">
+<link rel="stylesheet" href="cartoon.css?v=hub-1">
+<link rel="stylesheet" href="hub.css?v=hub-1">
+<link rel="stylesheet" href="cet4.css?v=hub-1">
 </head>
 <body>
 
@@ -29,7 +31,7 @@
         </svg>
       </span>
       <span class="brand-text">
-        <strong>AI 学习站</strong>
+        <strong>学习任意门</strong>
         <span id="syncStatus" class="sync-status">正在检查同步…</span>
       </span>
     </div>
@@ -37,7 +39,11 @@
   </div>
 
   <nav class="tabs-desktop" role="tablist" aria-label="主导航">
-    <button class="tab" type="button" role="tab" data-tab="roadmap" aria-controls="view-roadmap" aria-selected="true"><span class="nav-symbol" aria-hidden="true">🧭</span>学习路线</button>
+    <button class="tab" type="button" role="tab" data-tab="home" aria-controls="view-home" aria-selected="true"><span class="nav-symbol" aria-hidden="true">🏡</span>学习总览</button>
+    <button class="tab" type="button" role="tab" data-tab="planner" aria-controls="view-planner" aria-selected="false"><span class="nav-symbol" aria-hidden="true">📅</span>计划与专注</button>
+    <button class="tab" type="button" role="tab" data-tab="cet4" aria-controls="view-cet4" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🇬🇧</span>四级备考</button>
+    <button class="tab" type="button" role="tab" data-tab="roadmap" aria-controls="view-roadmap" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🧭</span>AI 学习路线</button>
+    <button class="tab" type="button" role="tab" data-tab="notes" aria-controls="view-notes" aria-selected="false"><span class="nav-symbol" aria-hidden="true">📒</span>笔记与错题</button>
     <button class="tab" type="button" role="tab" data-tab="glossary" aria-controls="view-glossary" aria-selected="false"><span class="nav-symbol" aria-hidden="true">📚</span>热词百科</button>
     <button class="tab" type="button" role="tab" data-tab="graph" aria-controls="view-graph" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🤖</span>模型图谱</button>
     <button class="tab" type="button" role="tab" data-tab="log" aria-controls="view-log" aria-selected="false"><span class="nav-symbol" aria-hidden="true">✏️</span>学习日志</button>
@@ -54,8 +60,25 @@
 
 <main class="wrap">
 
+  <section id="view-home" class="view" role="tabpanel"><div id="hubHome"></div></section>
+  <section id="view-planner" class="view" role="tabpanel" hidden><div id="hubPlanner"></div></section>
+  <section id="view-cet4" class="view" role="tabpanel" hidden><div id="cet4Mount"></div></section>
+  <section id="view-notes" class="view" role="tabpanel" hidden><div id="hubNotes"></div></section>
+
+  <section id="view-more" class="view" role="tabpanel" hidden>
+    <div class="view-head"><h2>🧰 我的学习工具箱</h2><p class="view-sub">课程、资料、日志与数据设置，都收在这里。</p></div>
+    <div class="tool-grid">
+      <button class="tool-card" type="button" data-tab="roadmap"><span aria-hidden="true">🧭</span><strong>AI 学习路线</strong><small>Git、文献、Python 与 Agent 项目</small></button>
+      <button class="tool-card" type="button" data-tab="glossary"><span aria-hidden="true">📚</span><strong>AI 热词百科</strong><small>概念解释、区别与关联词</small></button>
+      <button class="tool-card" type="button" data-tab="graph"><span aria-hidden="true">🤖</span><strong>模型与 Agent 图谱</strong><small>查找适合任务的工具</small></button>
+      <button class="tool-card" type="button" data-tab="log"><span aria-hidden="true">✏️</span><strong>学习日志</strong><small>记录每天学了什么、用了多久</small></button>
+      <button class="tool-card" type="button" data-tab="stats"><span aria-hidden="true">🏆</span><strong>学习成就与统计</strong><small>连续学习、投入与活动记录</small></button>
+      <button class="tool-card" type="button" data-tab="settings"><span aria-hidden="true">🛠️</span><strong>同步与备份</strong><small>连接 Gist、导出和恢复数据</small></button>
+    </div>
+  </section>
+
   <!-- ==================== 学习路线 ==================== -->
-  <section id="view-roadmap" class="view" role="tabpanel">
+  <section id="view-roadmap" class="view" role="tabpanel" hidden>
     <div class="adventure-banner">
       <img class="adventure-art" src="assets/doraemon-sky.jpg" alt="哆啦 A 梦戴着竹蜻蜓，在蓝天和云朵间开心地飞翔" width="1536" height="1024" fetchpriority="high">
       <div class="adventure-copy">
@@ -70,7 +93,7 @@
     <div class="hero" id="study-progress">
       <div class="hero-ring">
         <svg viewBox="0 0 120 120" role="img" aria-labelledby="ringLabel">
-          <title id="ringLabel">总体完成度</title>
+          <title id="ringLabel">AI 主线完成度</title>
           <circle class="ring-track" cx="60" cy="60" r="52"></circle>
           <circle id="ringValue" class="ring-value" cx="60" cy="60" r="52"></circle>
         </svg>
@@ -178,7 +201,7 @@
   <section id="view-stats" class="view" role="tabpanel" hidden>
     <div class="stat-grid">
       <div class="card stat">
-        <span class="muted small">总体完成度</span>
+        <span class="muted small">AI 主线完成度</span>
         <strong class="stat-value" id="statPercent">0%</strong>
         <span class="muted small" id="statTasks">0 / 0 个任务</span>
       </div>
@@ -280,7 +303,7 @@
 
     <div class="card form">
       <h2 class="card-title">备份与恢复</h2>
-      <p class="muted small">导出的 JSON 文件包含全部进度、笔记和日志。换电脑或换浏览器时，导入即可恢复。</p>
+      <p class="muted small">导出的 JSON 包含 AI 进度、打卡、计划、专注记录、笔记错题和四级学习记录。导入时按修改时间合并，保留较新的记录。</p>
       <div class="form-actions">
         <button class="btn" type="button" id="exportBtn">导出 JSON</button>
         <button class="btn" type="button" id="importBtn">导入 JSON</button>
@@ -290,7 +313,7 @@
 
     <div class="card form danger-card">
       <h2 class="card-title">重置</h2>
-      <p class="muted small">清空全部勾选、笔记和日志，回到空白状态。此操作不可撤销。</p>
+      <p class="muted small">清空全部学习进度、打卡、计划、笔记错题和练习记录。已连接同步时，清空也会同步到其他设备。请先导出备份。</p>
       <div class="form-actions">
         <button class="btn btn-danger" type="button" id="resetBtn">清空所有数据</button>
       </div>
@@ -304,29 +327,25 @@
 </main>
 
 <nav class="tabbar" role="tablist" aria-label="主导航">
-  <button class="tabbar-btn is-active" type="button" role="tab" data-tab="roadmap" aria-controls="view-roadmap" aria-selected="true">
-    <span class="mobile-symbol" aria-hidden="true">🧭</span>
-    <span>路线</span>
+  <button class="tabbar-btn is-active" type="button" role="tab" data-tab="home" aria-controls="view-home" aria-selected="true">
+    <span class="mobile-symbol" aria-hidden="true">🏡</span>
+    <span>总览</span>
   </button>
-  <button class="tabbar-btn" type="button" role="tab" data-tab="glossary" aria-controls="view-glossary" aria-selected="false">
-    <span class="mobile-symbol" aria-hidden="true">📚</span>
-    <span>名词</span>
+  <button class="tabbar-btn" type="button" role="tab" data-tab="cet4" aria-controls="view-cet4" aria-selected="false">
+    <span class="mobile-symbol" aria-hidden="true">🇬🇧</span>
+    <span>四级</span>
   </button>
-  <button class="tabbar-btn" type="button" role="tab" data-tab="graph" aria-controls="view-graph" aria-selected="false">
-    <span class="mobile-symbol" aria-hidden="true">🤖</span>
-    <span>图谱</span>
+  <button class="tabbar-btn" type="button" role="tab" data-tab="planner" aria-controls="view-planner" aria-selected="false">
+    <span class="mobile-symbol" aria-hidden="true">📅</span>
+    <span>计划</span>
   </button>
-  <button class="tabbar-btn" type="button" role="tab" data-tab="log" aria-controls="view-log" aria-selected="false">
-    <span class="mobile-symbol" aria-hidden="true">✏️</span>
-    <span>日志</span>
+  <button class="tabbar-btn" type="button" role="tab" data-tab="notes" aria-controls="view-notes" aria-selected="false">
+    <span class="mobile-symbol" aria-hidden="true">📒</span>
+    <span>笔记</span>
   </button>
-  <button class="tabbar-btn" type="button" role="tab" data-tab="stats" aria-controls="view-stats" aria-selected="false">
-    <span class="mobile-symbol" aria-hidden="true">🏆</span>
-    <span>统计</span>
-  </button>
-  <button class="tabbar-btn" type="button" role="tab" data-tab="settings" aria-controls="view-settings" aria-selected="false">
-    <span class="mobile-symbol" aria-hidden="true">🛠️</span>
-    <span>设置</span>
+  <button class="tabbar-btn" type="button" role="tab" data-tab="more" aria-controls="view-more" aria-selected="false">
+    <span class="mobile-symbol" aria-hidden="true">🧰</span>
+    <span>更多</span>
   </button>
 </nav>
 
@@ -335,6 +354,9 @@
 <script src="curriculum.js"></script>
 <script src="glossary.js"></script>
 <script src="models.js"></script>
-<script src="app.js?v=cartoon-1"></script>
+<script src="cet4-content.js?v=hub-1"></script>
+<script src="learning-hub.js?v=hub-1"></script>
+<script src="cet4.js?v=hub-1"></script>
+<script src="app.js?v=hub-1"></script>
 </body>
 </html>

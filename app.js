@@ -11,6 +11,7 @@
   const SYNC_KEY = "aiStudy.sync.v1";
   const API_URL = "api/state";
   const GIST_FILE = "ai-study-state.json";
+  const GIST_STUDY_FILE = "ai-study-hub.json";
 
   /* ---------- 扁平化任务表 ---------- */
   const ALL_TASKS = [];
@@ -87,7 +88,8 @@
       profile: { name: "", start: todayISO(), updatedAt: nowISO() },
       tasks: {},
       log: [],
-      logDeleted: {}
+      logDeleted: {},
+      study: {}
     };
   }
 
@@ -105,8 +107,35 @@
       },
       tasks: raw.tasks && typeof raw.tasks === "object" ? raw.tasks : {},
       log: Array.isArray(raw.log) ? raw.log : [],
-      logDeleted: raw.logDeleted && typeof raw.logDeleted === "object" ? raw.logDeleted : {}
+      logDeleted: raw.logDeleted && typeof raw.logDeleted === "object" ? raw.logDeleted : {},
+      study: normalizeStudy(raw.study)
     };
+  }
+
+  function normalizeStudy(raw) {
+    const clean = {};
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return clean;
+    Object.keys(raw).forEach(function (key) {
+      if (key === "__proto__" || key === "constructor" || key === "prototype") return;
+      const entry = raw[key];
+      if (!entry || typeof entry !== "object" || Array.isArray(entry)) return;
+      clean[key] = Object.assign({}, entry, { updatedAt: typeof entry.updatedAt === "string" ? entry.updatedAt : "" });
+    });
+    return clean;
+  }
+
+  function mergeStudy(left, right) {
+    const merged = normalizeStudy(left);
+    const incoming = normalizeStudy(right);
+    Object.keys(incoming).forEach(function (key) {
+      const current = merged[key];
+      const next = incoming[key];
+      if (!current) { merged[key] = next; return; }
+      const currentTime = dateToTime(current.updatedAt);
+      const nextTime = dateToTime(next.updatedAt);
+      if (nextTime > currentTime || (nextTime === currentTime && (next.deleted === true || current.deleted !== true))) merged[key] = next;
+    });
+    return merged;
   }
 
   function loadLocalState() {
@@ -194,6 +223,32 @@
     });
   }
 
+  function dateFromStamp(stamp) {
+    const value = new Date(stamp);
+    if (!isFinite(value.getTime())) return "";
+    return value.getFullYear() + "-" + pad2(value.getMonth() + 1) + "-" + pad2(value.getDate());
+  }
+
+  function studyActivities() {
+    const items = [];
+    Object.keys(state.study).forEach(function (key) {
+      const item = state.study[key];
+      if (!item || item.deleted) return;
+      const kind = key.split(":")[0];
+      if (["checkin", "plan", "note", "focus", "practice", "word", "cet4-task", "cet4-writing", "cet4-translation"].indexOf(kind) === -1) return;
+      if ((kind === "plan" || kind === "cet4-task") && !item.done) return;
+      let date = dateFromStamp(item.updatedAt);
+      if (kind === "checkin" || kind === "focus" || kind === "practice") date = item.date || date;
+      else if (kind === "word") date = item.lastReviewedDate || date;
+      else if (item.doneAt) date = item.doneAt;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+      const titles = { checkin: "完成每日打卡", plan: "完成计划", note: "整理学习笔记", focus: "完成专注学习", practice: "完成四级练习", word: "复习四级单词", "cet4-task": "完成四级阶段任务", "cet4-writing": "练习四级写作", "cet4-translation": "练习四级翻译" };
+      const minutes = kind === "focus" || kind === "practice" ? Math.max(0, Math.min(1440, Number(item.minutes) || 0)) : 0;
+      items.push({ date: date, sort: String(item.updatedAt || date), title: titles[kind] + (item.title ? "：" + item.title : ""), minutes: minutes });
+    });
+    return items;
+  }
+
   function activityOn(date) {
     let n = 0;
     ALL_TASKS.forEach(function (t) {
@@ -203,6 +258,7 @@
     state.log.forEach(function (item) {
       if (item.date === date) n += 1;
     });
+    studyActivities().forEach(function (item) { if (item.date === date) n += 1; });
     return n;
   }
 
@@ -215,11 +271,12 @@
     state.log.forEach(function (item) {
       if (item.date) set[item.date] = true;
     });
+    studyActivities().forEach(function (item) { set[item.date] = true; });
     return Object.keys(set).sort();
   }
 
   function totalLoggedMinutes() {
-    return state.log.reduce(function (sum, item) { return sum + (Number(item.minutes) || 0); }, 0);
+    return state.log.reduce(function (sum, item) { return sum + (Number(item.minutes) || 0); }, 0) + studyActivities().reduce(function (sum, item) { return sum + item.minutes; }, 0);
   }
 
   function computeStreak() {
@@ -348,6 +405,8 @@
       .map(function (id) { return logById[id]; })
       .filter(function (item) { return String(merged.logDeleted[item.id] || "") <= String(item.updatedAt || ""); });
 
+    merged.study = mergeStudy(left.study, right.study);
+
     merged.updatedAt = dateToTime(left.updatedAt) > dateToTime(right.updatedAt) ? left.updatedAt : right.updatedAt;
     return merged;
   }
@@ -415,27 +474,36 @@
     });
     if (r.status === 404) return null;
     if (!r.ok) throw new Error(gistError(r));
-    const file = r.data && r.data.files ? r.data.files[GIST_FILE] : null;
-    if (!file) return null;
-    if (file.truncated) throw new Error("云端数据被截断，请检查 Gist 文件大小");
+    const files = r.data && r.data.files ? r.data.files : {};
+    const file = files[GIST_FILE];
+    const hubFile = files[GIST_STUDY_FILE];
+    if (!file && !hubFile) return null;
+    if ((file && file.truncated) || (hubFile && hubFile.truncated)) throw new Error("云端数据被截断，请先导出备份并检查 Gist 文件大小");
     try {
-      const parsed = JSON.parse(file.content || "{}");
-      return normalizeState(parsed && parsed.state ? parsed.state : parsed);
+      const parsed = file ? JSON.parse(file.content || "{}") : {};
+      const doc = normalizeState(parsed && parsed.state ? parsed.state : parsed);
+      if (hubFile) {
+        const extra = JSON.parse(hubFile.content || "{}");
+        doc.study = mergeStudy(doc.study, extra.study);
+      }
+      return doc;
     } catch (err) {
-      return null;
+      throw new Error("云端学习数据格式无效，已停止同步以保护本机记录");
     }
   }
 
   async function gistPush(doc) {
     const files = {};
     files[GIST_FILE] = { content: JSON.stringify({ app: "ai-study-tracker", savedAt: nowISO(), state: doc }, null, 2) };
+    // 独立文件保留扩展记录；旧版设备只更新原来的文件时不会丢失这些数据。
+    files[GIST_STUDY_FILE] = { content: JSON.stringify({ app: "ai-study-hub", schema: 1, study: normalizeStudy(doc.study) }, null, 2) };
 
     if (!syncCfg.gistId) {
       const r = await fetchJSON("https://api.github.com/gists", {
         method: "POST",
         headers: gistHeaders(),
         body: JSON.stringify({
-          description: "AI 学习路线 · 学习进度数据（由网页自动生成）",
+          description: "学习中心 · AI、四级与日常学习记录",
           public: false,
           files: files
         })
@@ -480,7 +548,7 @@
   let syncTimer = null;
 
   function markChanged() {
-    state.updatedAt = nowISO();
+    state.updatedAt = new Date(Math.max(Date.now(), dateToTime(state.updatedAt) + 1)).toISOString();
     saveLocalState();
     scheduleSync();
   }
@@ -547,6 +615,7 @@
     if (!manual && Date.now() < sync.nextAllowedAt) return false;
 
     sync.busy = true;
+    let changedDuringPush = false;
     setSyncButtonsDisabled(true);
     setSyncStatus("正在同步…", "");
 
@@ -560,9 +629,12 @@
       const localAfter = JSON.stringify(state);
 
       if (JSON.stringify(remote) !== localAfter) {
-        const pushed = await pushByMode(state);
+        const outgoing = JSON.parse(JSON.stringify(state));
+        const sentState = JSON.stringify(outgoing);
+        const pushed = await pushByMode(outgoing);
+        changedDuringPush = JSON.stringify(state) !== sentState;
         if (pushed) {
-          state = pushed;
+          state = mergeDocs(state, pushed);
           saveLocalState();
         }
       } else {
@@ -585,6 +657,7 @@
       sync.busy = false;
       setSyncButtonsDisabled(false);
       renderSyncPanel();
+      if (changedDuringPush && sync.status === "ok") scheduleSync();
     }
     return sync.status === "ok";
   }
@@ -994,7 +1067,7 @@
     $("statStreak").textContent = streak.current;
     $("statStreakBest").textContent = streak.best;
     $("statHours").textContent = Math.round(totalLoggedMinutes() / 60);
-    $("statLogCount").textContent = state.log.length + " 条日志";
+    $("statLogCount").textContent = "日志 + 专注 + 专项练习";
     $("statDays").textContent = dates.length;
     $("statStart").textContent = state.profile.start ? "开始于 " + shortDate(state.profile.start) : "还没设置开始日期";
 
@@ -1031,7 +1104,7 @@
       html += "</div>";
     });
     html += "</div>";
-    html += '<p class="muted small" style="margin-top:10px">柱子代表当天完成的任务数 + 写的日志数，最高 ' + max + " 项。</p>";
+    html += '<p class="muted small" style="margin-top:10px">包含任务、打卡、笔记、复习与练习等学习活动，最高 ' + max + " 项。</p>";
     $("activityChart").innerHTML = html;
   }
 
@@ -1046,6 +1119,7 @@
     state.log.forEach(function (item) {
       events.push({ date: item.date, sort: item.date + (item.updatedAt || ""), text: "学习日志：" + item.title });
     });
+    studyActivities().forEach(function (item) { events.push({ date: item.date, sort: item.date + item.sort, text: item.title }); });
     events.sort(function (a, b) { return String(b.sort).localeCompare(String(a.sort)); });
 
     const host = $("timeline");
@@ -1074,12 +1148,44 @@
     $("profileName").value = state.profile.name || "";
     $("profileStart").value = state.profile.start || "";
     renderSyncPanel();
-    const itemCount = state.log.length + doneCount();
-    $("aboutLine").textContent = "AI 学习站 · 路线 " + ALL_TASKS.length + " 个任务 / " + CUR.phases.length + " 个阶段 · 热词 " +
-      GL.terms.length + " 条 · 模型图谱 " + MG.items.length + " 条 · 已记录 " + itemCount + " 项动态";
+    const itemCount = state.log.length + doneCount() + Object.keys(state.study).filter(function (key) { return !state.study[key].deleted; }).length;
+    $("aboutLine").textContent = "学习任意门 · AI 路线 " + ALL_TASKS.length + " 个任务 · 英语四级 / 计划打卡 / 专注与笔记 · 热词 " +
+      GL.terms.length + " 条 · 模型图谱 " + MG.items.length + " 条 · 已保存 " + itemCount + " 项记录";
   }
 
   /* ---------- 总渲染 ---------- */
+  function studyModules() {
+    return [window.LearningHub, window.CET4Learning].filter(function (module) { return module && typeof module.render === "function"; });
+  }
+
+  function createStudyBridge() {
+    function validKey(key) {
+      return typeof key === "string" && key.length > 0 && key.length <= 240 && ["__proto__", "constructor", "prototype"].indexOf(key) === -1;
+    }
+    return {
+      read: function () { return JSON.parse(JSON.stringify(state)); },
+      put: function (key, fields) {
+        if (!validKey(key) || !fields || typeof fields !== "object" || Array.isArray(fields)) throw new Error("学习记录格式无效");
+        const updatedAt = new Date(Math.max(Date.now(), dateToTime(state.study[key] && state.study[key].updatedAt) + 1)).toISOString();
+        state.study[key] = Object.assign({}, state.study[key] || {}, JSON.parse(JSON.stringify(fields)), { deleted: false, updatedAt: updatedAt });
+        markChanged();
+        renderAll();
+        return JSON.parse(JSON.stringify(state.study[key]));
+      },
+      remove: function (key) {
+        if (!validKey(key)) return;
+        const updatedAt = new Date(Math.max(Date.now(), dateToTime(state.study[key] && state.study[key].updatedAt) + 1)).toISOString();
+        state.study[key] = Object.assign({}, state.study[key] || {}, { deleted: true, updatedAt: updatedAt });
+        markChanged();
+        renderAll();
+      },
+      toast: showToast,
+      navigate: function (name) { if (TABS.indexOf(name) !== -1) switchTab(name); },
+      today: todayISO,
+      uid: uid
+    };
+  }
+
   function renderAll() {
     renderHero();
     renderPhases();
@@ -1088,6 +1194,7 @@
     renderLogs();
     renderStats();
     renderSettings();
+    studyModules().forEach(function (module) { module.render(); });
   }
 
   /* ---------- 任务操作 ---------- */
@@ -1195,8 +1302,8 @@
         if (!incoming || typeof incoming !== "object" || (!incoming.tasks && !incoming.log)) {
           throw new Error("格式不对");
         }
-        if (!window.confirm("导入会覆盖当前进度，确定继续？")) return;
-        state = normalizeState(incoming);
+        if (!window.confirm("导入后会按更新时间合并备份和当前记录。不同条目会保留，同一条记录取较新版本。继续吗？")) return;
+        state = mergeDocs(state, incoming);
         state.updatedAt = nowISO();
         markChanged();
         renderAll();
@@ -1208,12 +1315,35 @@
     reader.readAsText(file);
   }
 
-  function resetAll() {
-    if (!window.confirm("确定清空所有进度、笔记和日志？此操作不可撤销。")) return;
-    if (!window.confirm("再确认一次：真的要清空吗？")) return;
+  async function resetAll() {
+    if (!window.confirm("确定清空任务进度、打卡、计划、笔记、四级练习和日志？已连接同步时，会同步清空当前云端记录。学习档案会保留。")) return;
+    if (!window.confirm("再确认一次：此操作不可撤销。建议先导出 JSON 备份。真的清空吗？")) return;
+    if (sync.busy) { showToast("正在同步，请稍后再清空"); return; }
+    if (sync.mode !== "off") {
+      try {
+        const remote = await pullByMode();
+        if (remote) state = mergeDocs(state, remote);
+      } catch (err) {
+        showToast("无法读取云端，暂未清空。请检查同步连接后重试");
+        return;
+      }
+    }
+    const previous = state;
+    let latest = Math.max(Date.now(), dateToTime(previous.updatedAt));
+    [previous.tasks, previous.study].forEach(function (map) { Object.keys(map).forEach(function (key) { latest = Math.max(latest, dateToTime(map[key] && map[key].updatedAt)); }); });
+    previous.log.forEach(function (item) { latest = Math.max(latest, dateToTime(item.updatedAt)); });
+    Object.keys(previous.logDeleted).forEach(function (key) { latest = Math.max(latest, dateToTime(previous.logDeleted[key])); });
+    const stamp = new Date(latest + 1).toISOString();
     state = emptyState();
+    state.profile = previous.profile;
+    state.updatedAt = stamp;
+    Object.keys(previous.tasks).forEach(function (key) { state.tasks[key] = { done: false, doneAt: null, note: "", updatedAt: stamp }; });
+    state.logDeleted = Object.assign({}, previous.logDeleted);
+    previous.log.forEach(function (item) { state.logDeleted[item.id] = stamp; });
+    Object.keys(previous.study).forEach(function (key) { state.study[key] = { deleted: true, updatedAt: stamp }; });
     ui.openNotes = {};
     ui.editingLogId = null;
+    studyModules().forEach(function (module) { if (typeof module.reset === "function") module.reset(); });
     markChanged();
     renderAll();
     resetLogForm();
@@ -1221,7 +1351,7 @@
   }
 
   /* ---------- 标签页 ---------- */
-  const TABS = ["roadmap", "glossary", "graph", "log", "stats", "settings"];
+  const TABS = ["home", "planner", "cet4", "roadmap", "notes", "glossary", "graph", "log", "stats", "settings", "more"];
 
   function switchTab(name) {
     TABS.forEach(function (key) {
@@ -1236,7 +1366,7 @@
       }
     });
     document.querySelectorAll("[data-tab]").forEach(function (btn) {
-      const active = btn.dataset.tab === name;
+      const active = btn.dataset.tab === name || (btn.dataset.tab === "more" && ["roadmap", "glossary", "graph", "log", "stats", "settings"].indexOf(name) !== -1);
       btn.classList.toggle("is-active", active);
       btn.setAttribute("aria-selected", active ? "true" : "false");
     });
@@ -1517,8 +1647,10 @@
       btn.classList.toggle("is-active", btn.dataset.filter === ui.filter);
     });
 
+    window.STUDY_STORE = createStudyBridge();
+    studyModules().forEach(function (module) { if (typeof module.init === "function") module.init(window.STUDY_STORE); });
     bindEvents();
-    switchTab("roadmap");
+    switchTab("home");
     renderAll();
 
     window.addEventListener("beforeunload", function () { saveLocalState(); });
