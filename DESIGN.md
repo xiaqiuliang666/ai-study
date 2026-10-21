@@ -31,6 +31,14 @@
 
 新领域资料使用 [USGS 监测案例](https://www.usgs.gov/programs/landslide-hazards/science/real-time-monitoring-potential-landslides)、[NOAA 托管 WMO 2008 历史版](https://www.weather.gov/media/epz/mesonet/CWOP-WMO8.pdf)、[IEEE 写作结构](https://journals.ieeeauthorcenter.ieee.org/create-your-ieee-journal-article/create-the-text-of-your-article/structure-your-article/)及[可复现性指导](https://journals.ieeeauthorcenter.ieee.org/create-your-ieee-journal-article/research-reproducibility/)。其余每篇保留 Git、GitHub、Python、Zotero、Hugging Face、MCP、LangGraph、原论文和英语教学机构的一手入口。
 
+## 学术研究工作台
+
+侧栏新增独立「学术研究」，手机从「更多」或首页科研卡进入，支持 `?tab=research` 直达。保留既有卡通主题，使用较安静的阅读卡和阶段清单展示研究材料。工作台含研究总览、小论文路线、文献工作台和阅读方法。
+
+导师资料使用[数学与计算机学院官方主页](https://sjxy.whpu.edu.cn/info/1134/3017.htm)核实身份与研究方向；2023 水面垃圾检测和 2012 PCB 图像对准两条论文线索来自期刊原页。当前在研纵向项目未获完整公开证据，页面明确提示向导师确认；论文的资助编号不被解释为特定作者的主持项目。
+
+前、中、后期围绕检索阅读、问题与实验设计、数据与基线、分析、写作、引用和反馈组织，每步提供实际操作及产物。阶段勾选和文献卡记录保存到 `study`，沿用既有同步与备份。新建研究记录和阅读卡均由用户操作触发，不预填虚构成果。
+
 ## 插画
 
 使用内置 image_gen 生成。原始图保存于 `assets/doraemon-sky-original.png`；网站加载压缩版 `assets/doraemon-sky.jpg`（1536 × 1024，约 229 KB）。原图未随网页上传。

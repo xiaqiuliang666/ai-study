@@ -235,14 +235,14 @@
       const item = state.study[key];
       if (!item || item.deleted) return;
       const kind = key.split(":")[0];
-      if (["checkin", "plan", "note", "focus", "practice", "word", "cet4-task", "cet4-writing", "cet4-translation", "knowledge"].indexOf(kind) === -1) return;
-      if ((kind === "plan" || kind === "cet4-task" || kind === "knowledge") && !item.done) return;
+      if (["checkin", "plan", "note", "focus", "practice", "word", "cet4-task", "cet4-writing", "cet4-translation", "knowledge", "research-step", "paper", "research"].indexOf(kind) === -1) return;
+      if ((kind === "plan" || kind === "cet4-task" || kind === "knowledge" || kind === "research-step") && !item.done) return;
       let date = dateFromStamp(item.updatedAt);
       if (kind === "checkin" || kind === "focus" || kind === "practice") date = item.date || date;
       else if (kind === "word") date = item.lastReviewedDate || date;
       else if (item.doneAt) date = item.doneAt;
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
-      const titles = { checkin: "完成每日打卡", plan: "完成计划", note: "整理学习笔记", focus: "完成专注学习", practice: "完成四级练习", word: "复习四级单词", "cet4-task": "完成四级阶段任务", "cet4-writing": "练习四级写作", "cet4-translation": "练习四级翻译", knowledge: "学习知识指南" };
+      const titles = { checkin: "完成每日打卡", plan: "完成计划", note: "整理学习笔记", focus: "完成专注学习", practice: "完成四级练习", word: "复习四级单词", "cet4-task": "完成四级阶段任务", "cet4-writing": "练习四级写作", "cet4-translation": "练习四级翻译", knowledge: "学习知识指南", "research-step": "完成科研步骤", paper: "整理文献阅读卡", research: "更新研究计划" };
       const minutes = kind === "focus" || kind === "practice" ? Math.max(0, Math.min(1440, Number(item.minutes) || 0)) : 0;
       items.push({ date: date, sort: String(item.updatedAt || date), title: titles[kind] + (item.title ? "：" + item.title : ""), minutes: minutes });
     });
@@ -1149,13 +1149,13 @@
     $("profileStart").value = state.profile.start || "";
     renderSyncPanel();
     const itemCount = state.log.length + doneCount() + Object.keys(state.study).filter(function (key) { return !state.study[key].deleted; }).length;
-    $("aboutLine").textContent = "学习任意门 · AI 路线 " + ALL_TASKS.length + " 个任务 · 英语四级 / 计划打卡 / 专注与笔记 · 热词 " +
+    $("aboutLine").textContent = "学习任意门 · AI 路线 " + ALL_TASKS.length + " 个任务 · 学术研究 / 文献与知识资料 / 英语四级 / 计划专注 · 热词 " +
       GL.terms.length + " 条 · 模型图谱 " + MG.items.length + " 条 · 已保存 " + itemCount + " 项记录";
   }
 
   /* ---------- 总渲染 ---------- */
   function studyModules() {
-    return [window.LearningHub, window.CET4Learning, window.KnowledgeLibrary].filter(function (module) { return module && typeof module.render === "function"; });
+    return [window.LearningHub, window.CET4Learning, window.KnowledgeLibrary, window.ResearchWorkspace].filter(function (module) { return module && typeof module.render === "function"; });
   }
 
   function createStudyBridge() {
@@ -1351,7 +1351,11 @@
   }
 
   /* ---------- 标签页 ---------- */
-  const TABS = ["home", "planner", "cet4", "roadmap", "library", "notes", "glossary", "graph", "log", "stats", "settings", "more"];
+  const TABS = ["home", "research", "planner", "cet4", "roadmap", "library", "notes", "glossary", "graph", "log", "stats", "settings", "more"];
+
+  function navigationButtons() {
+    return document.querySelectorAll(".tabs-desktop [data-tab], .tabbar [data-tab], #view-more [data-tab]");
+  }
 
   function switchTab(name) {
     TABS.forEach(function (key) {
@@ -1365,8 +1369,8 @@
         view.setAttribute("hidden", "");
       }
     });
-    document.querySelectorAll("[data-tab]").forEach(function (btn) {
-      const active = btn.dataset.tab === name || (btn.dataset.tab === "more" && ["roadmap", "library", "glossary", "graph", "log", "stats", "settings"].indexOf(name) !== -1);
+    navigationButtons().forEach(function (btn) {
+      const active = btn.dataset.tab === name || (btn.dataset.tab === "more" && ["research", "roadmap", "library", "glossary", "graph", "log", "stats", "settings"].indexOf(name) !== -1);
       btn.classList.toggle("is-active", active);
       btn.setAttribute("aria-selected", active ? "true" : "false");
     });
@@ -1396,7 +1400,7 @@
       try { localStorage.setItem(THEME_KEY, next); } catch (err) { /* 忽略 */ }
     });
 
-    document.querySelectorAll("[data-tab]").forEach(function (btn) {
+    navigationButtons().forEach(function (btn) {
       btn.addEventListener("click", function () { switchTab(btn.dataset.tab); });
     });
 

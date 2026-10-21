@@ -10,13 +10,14 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
-<title>学习任意门 · AI / 四级 / 每日计划</title>
+<title>学习任意门 · 学术研究 / AI / 四级</title>
 <link rel="preload" as="image" href="assets/doraemon-sky.jpg">
 <link rel="stylesheet" href="styles.css?v=cartoon-1">
 <link rel="stylesheet" href="cartoon.css?v=hub-1">
 <link rel="stylesheet" href="hub.css?v=hub-1">
 <link rel="stylesheet" href="cet4.css?v=hub-1">
 <link rel="stylesheet" href="knowledge.css?v=resources-1">
+<link rel="stylesheet" href="research.css?v=academic-1">
 </head>
 <body>
 
@@ -41,6 +42,7 @@
 
   <nav class="tabs-desktop" role="tablist" aria-label="主导航">
     <button class="tab" type="button" role="tab" data-tab="home" aria-controls="view-home" aria-selected="true"><span class="nav-symbol" aria-hidden="true">🏡</span>学习总览</button>
+    <button class="tab" type="button" role="tab" data-tab="research" aria-controls="view-research" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🎓</span>学术研究</button>
     <button class="tab" type="button" role="tab" data-tab="planner" aria-controls="view-planner" aria-selected="false"><span class="nav-symbol" aria-hidden="true">📅</span>计划与专注</button>
     <button class="tab" type="button" role="tab" data-tab="library" aria-controls="view-library" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🔬</span>知识与科研资料</button>
     <button class="tab" type="button" role="tab" data-tab="cet4" aria-controls="view-cet4" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🇬🇧</span>四级备考</button>
@@ -67,10 +69,12 @@
   <section id="view-cet4" class="view" role="tabpanel" hidden><div id="cet4Mount"></div></section>
   <section id="view-notes" class="view" role="tabpanel" hidden><div id="hubNotes"></div></section>
   <section id="view-library" class="view" role="tabpanel" hidden><div id="knowledgeMount"></div></section>
+  <section id="view-research" class="view" role="tabpanel" hidden><div id="researchMount"></div></section>
 
   <section id="view-more" class="view" role="tabpanel" hidden>
     <div class="view-head"><h2>🧰 我的学习工具箱</h2><p class="view-sub">课程、资料、日志与数据设置，都收在这里。</p></div>
     <div class="tool-grid">
+      <button class="tool-card" type="button" data-tab="research"><span aria-hidden="true">🎓</span><strong>学术研究工作台</strong><small>导师信息、小论文路线、文献卡和精读方法</small></button>
       <button class="tool-card" type="button" data-tab="library"><span aria-hidden="true">🔬</span><strong>知识与科研资料库</strong><small>文献阅读、科研写作、监测案例与基础知识</small></button>
       <button class="tool-card" type="button" data-tab="roadmap"><span aria-hidden="true">🧭</span><strong>AI 学习路线</strong><small>Git、文献、Python 与 Agent 项目</small></button>
       <button class="tool-card" type="button" data-tab="glossary"><span aria-hidden="true">📚</span><strong>AI 热词百科</strong><small>概念解释、区别与关联词</small></button>
@@ -307,7 +311,7 @@
 
     <div class="card form">
       <h2 class="card-title">备份与恢复</h2>
-      <p class="muted small">导出的 JSON 包含 AI 进度、打卡、计划、专注记录、笔记错题和四级学习记录。导入时按修改时间合并，保留较新的记录。</p>
+      <p class="muted small">导出的 JSON 包含学习进度、科研项目、文献阅读卡、打卡计划、笔记错题和四级记录。导入时按修改时间合并，保留较新的记录。</p>
       <div class="form-actions">
         <button class="btn" type="button" id="exportBtn">导出 JSON</button>
         <button class="btn" type="button" id="importBtn">导入 JSON</button>
@@ -359,13 +363,15 @@
 <script src="glossary.js"></script>
 <script src="models.js"></script>
 <script src="cet4-content.js?v=resources-1"></script>
-<script src="learning-hub.js?v=resources-1"></script>
+<script src="learning-hub.js?v=academic-1"></script>
 <script src="cet4.js?v=resources-1"></script>
 <script src="knowledge-graduate.js?v=resources-1"></script>
 <script src="knowledge-foundations.js?v=resources-1"></script>
 <script src="knowledge-agent.js?v=resources-1"></script>
 <script src="knowledge-english.js?v=resources-1"></script>
 <script src="knowledge.js?v=resources-1"></script>
-<script src="app.js?v=resources-1"></script>
+<script src="research-content.js?v=academic-1"></script>
+<script src="research.js?v=academic-1"></script>
+<script src="app.js?v=academic-1"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 {
   "name": "学习任意门",
   "short_name": "学习任意门",
-  "description": "AI 与英语四级学习、每日打卡、计划专注、笔记错题和跨设备进度同步",
+  "description": "研一学术研究、文献阅读、小论文路线、AI 与英语四级学习、计划专注和跨设备同步",
   "lang": "zh-CN",
   "start_url": "./index.html",
   "scope": "./",
