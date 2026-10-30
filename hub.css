@@ -103,6 +103,22 @@
 .learning-hub select:disabled { opacity: .65; }
 .hub-button-row { display: flex; align-items: center; flex-wrap: wrap; gap: 11px; }
 .hub-focus .hub-button-row .hub-btn-primary { flex: 1; }
+.hub-timer-mode { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 2px 0 4px; }
+.hub-timer-mode-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; background: var(--surface-2); border: 2px solid var(--border); color: var(--text-2); }
+.hub-pomo-dots { display: inline-flex; align-items: center; gap: 6px; }
+.hub-pomo-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--surface-3); border: 2px solid var(--border); transition: background .2s, transform .2s; }
+.hub-pomo-dot.is-done { background: #f2594b; border-color: #d94437; transform: scale(1.12); }
+.hub-timer-ref { display: flex; align-items: center; gap: 10px; margin: 6px 0 16px; padding: 12px 14px; border: 2px dashed var(--border-strong); border-radius: 14px; background: var(--surface-2); }
+.hub-timer-ref > span { flex: none; font-size: 12px; font-weight: 750; color: var(--text-2); }
+.hub-timer-ref strong { flex: 1; min-width: 0; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hub-timer-ref-empty { flex-direction: column; align-items: stretch; }
+.hub-timer-bind { display: block; width: 100%; }
+.hub-timer-bind select { width: 100%; }
+.hub-timer-ref .hub-text-btn { flex: none; }
+.hub-timer-ref[data-empty] { border-style: dashed; }
+.hub-focus[data-mode="shortBreak"] .hub-timer-digits, .hub-focus[data-mode="longBreak"] .hub-timer-digits { color: #2fa36a; }
+.hub-focus[data-mode="shortBreak"] { background: linear-gradient(145deg, var(--surface), #e8f7ed); }
+.hub-focus[data-mode="longBreak"] { background: linear-gradient(145deg, var(--surface), #e0f4ff); }
 .hub-activity-list { margin: 0; padding: 0; list-style: none; }
 .hub-activity-list li { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px dashed var(--border); }
 .hub-activity-list li:first-child { padding-top: 4px; }

@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="cet4.css?v=hub-2">
 <link rel="stylesheet" href="knowledge.css?v=resources-2">
 <link rel="stylesheet" href="research.css?v=academic-2">
+<link rel="stylesheet" href="profile.css?v=profile-1">
 </head>
 <body>
 
@@ -49,6 +50,7 @@
     <button class="tab" type="button" role="tab" data-tab="roadmap" aria-controls="view-roadmap" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🧭</span>AI 学习路线</button>
     <button class="tab" type="button" role="tab" data-tab="glossary" aria-controls="view-glossary" aria-selected="false"><span class="nav-symbol" aria-hidden="true">📚</span>热词百科</button>
     <button class="tab" type="button" role="tab" data-tab="graph" aria-controls="view-graph" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🤖</span>模型图谱</button>
+    <button class="tab" type="button" role="tab" data-tab="profile" aria-controls="view-profile" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🗂️</span>学习档案</button>
     <button class="tab" type="button" role="tab" data-tab="stats" aria-controls="view-stats" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🏆</span>学习成就</button>
     <button class="tab" type="button" role="tab" data-tab="settings" aria-controls="view-settings" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🛠️</span>我的设置</button>
   </nav>
@@ -76,6 +78,7 @@
       <button class="tool-card" type="button" data-tab="roadmap"><span aria-hidden="true">🧭</span><strong>AI 学习路线</strong><small>Git、文献、Python 与 Agent 项目</small></button>
       <button class="tool-card" type="button" data-tab="glossary"><span aria-hidden="true">📚</span><strong>AI 热词百科</strong><small>概念解释、区别与关联词</small></button>
       <button class="tool-card" type="button" data-tab="graph"><span aria-hidden="true">🤖</span><strong>模型与 Agent 图谱</strong><small>查找适合任务的工具</small></button>
+      <button class="tool-card" type="button" data-tab="profile"><span aria-hidden="true">🗂️</span><strong>我的学习档案</strong><small>累计投入、学科分布、番茄数与复盘</small></button>
       <button class="tool-card" type="button" data-tab="stats"><span aria-hidden="true">🏆</span><strong>学习成就与统计</strong><small>连续学习、投入与活动记录</small></button>
       <button class="tool-card" type="button" data-tab="settings"><span aria-hidden="true">🛠️</span><strong>同步与备份</strong><small>连接 Gist、导出和恢复数据</small></button>
     </div>
@@ -166,6 +169,11 @@
     <div id="graphLive" class="live-list"></div>
   </section>
 
+  <!-- ==================== 学习档案 ==================== -->
+  <section id="view-profile" class="view" role="tabpanel" hidden>
+    <div id="profileMount"></div>
+  </section>
+
   <!-- ==================== 统计 ==================== -->
   <section id="view-stats" class="view" role="tabpanel" hidden>
     <div class="stat-grid">
@@ -193,6 +201,9 @@
 
     <div class="section-head"><h2>各阶段进度</h2></div>
     <div id="phaseStats" class="card phase-stats"></div>
+
+    <div class="section-head"><h2>学科投入分布</h2></div>
+    <div id="subjectDist" class="card subject-dist"></div>
 
     <div class="section-head"><h2>最近 14 天</h2></div>
     <div id="activityChart" class="card activity"></div>
@@ -329,6 +340,7 @@
 <script src="knowledge.js?v=resources-2"></script>
 <script src="research-content.js?v=academic-2"></script>
 <script src="research.js?v=academic-2"></script>
+<script src="profile.js?v=profile-1"></script>
 <script src="app.js?v=academic-2"></script>
 </body>
 </html>

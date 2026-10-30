@@ -1042,6 +1042,7 @@
     });
     $("phaseStats").innerHTML = html;
 
+    renderSubjectDist();
     renderActivity();
     renderTimeline();
   }
@@ -1092,6 +1093,33 @@
     host.innerHTML = html;
   }
 
+  /* ---------- 渲染：学科投入分布 ---------- */
+  function renderSubjectDist() {
+    const host = $("subjectDist");
+    if (!host) return;
+    const buckets = { ai: 0, cet4: 0, research: 0, general: 0 };
+    const meta = { ai: { label: "AI / 编程", icon: "🤖", color: "#079bda" }, cet4: { label: "英语四级", icon: "🔤", color: "#f2a03d" }, research: { label: "科研学术", icon: "🎓", color: "#8f6bd8" }, general: { label: "其他学习", icon: "📚", color: "#5bbf8a" } };
+    studyActivities().forEach(function (item) {
+      const minutes = item.minutes || 0;
+      if (!minutes) return;
+      // 根据 title 判断学科：含"四级"归 cet4，含"科研/研究/文献"归 research，否则按专注记录 subject
+      if (item.title.indexOf("四级") !== -1 || item.title.indexOf("单词") !== -1) buckets.cet4 += minutes;
+      else if (item.title.indexOf("科研") !== -1 || item.title.indexOf("文献") !== -1 || item.title.indexOf("研究") !== -1) buckets.research += minutes;
+      else if (item.title.indexOf("专注") !== -1) buckets.ai += minutes;
+      else buckets.general += minutes;
+    });
+    const max = Math.max(1, Math.max.apply(null, Object.keys(buckets).map(function (k) { return buckets[k]; })));
+    const total = Object.keys(buckets).reduce(function (s, k) { return s + buckets[k]; }, 0);
+    let html = "";
+    Object.keys(meta).forEach(function (k) {
+      const m = meta[k], val = buckets[k];
+      const pct = Math.round(val / max * 100);
+      html += '<div class="subject-row"><div class="subject-row-head"><span>' + m.icon + ' ' + m.label + '</span><strong>' + val + ' 分钟</strong></div><div class="bar"><i style="width:' + pct + '%;background:' + m.color + '"></i></div></div>';
+    });
+    html += '<p class="muted small" style="margin-top:12px">累计专注与练习时长按学科划分，共 ' + total + ' 分钟。</p>';
+    host.innerHTML = html;
+  }
+
   /* ---------- 渲染：设置 ---------- */
   function syncFormFromCfg() {
     $("syncMode").value = syncCfg.mode;
@@ -1112,7 +1140,7 @@
 
   /* ---------- 总渲染 ---------- */
   function studyModules() {
-    return [window.LearningHub, window.CET4Learning, window.KnowledgeLibrary, window.ResearchWorkspace].filter(function (module) { return module && typeof module.render === "function"; });
+    return [window.LearningHub, window.CET4Learning, window.KnowledgeLibrary, window.ResearchWorkspace, window.Profile].filter(function (module) { return module && typeof module.render === "function"; });
   }
 
   function createStudyBridge() {
@@ -1139,7 +1167,27 @@
       toast: showToast,
       navigate: function (name) { if (TABS.indexOf(name) !== -1) switchTab(name); },
       today: todayISO,
-      uid: uid
+      uid: uid,
+      plans: function () {
+        const today = todayISO();
+        const list = [];
+        Object.keys(state.study).forEach(function (key) {
+          if (key.indexOf("plan:") !== 0) return;
+          const r = state.study[key];
+          if (!r || r.deleted) return;
+          list.push({ key: key, title: r.title || "", date: r.date || "", subject: r.subject || "general", done: r.done === true });
+        });
+        return list;
+      },
+      roadmapTasks: function () {
+        const list = [];
+        CUR.phases.forEach(function (phase) {
+          phase.tasks.forEach(function (task) {
+            list.push({ id: task.id, title: task.title, phase: phase.id, phaseTitle: phase.title, done: isDone(task.id), minutes: task.minutes || 0 });
+          });
+        });
+        return list;
+      }
     };
   }
 
@@ -1260,7 +1308,7 @@
   }
 
   /* ---------- 标签页 ---------- */
-  const TABS = ["home", "research", "planner", "cet4", "roadmap", "library", "glossary", "graph", "stats", "settings", "more"];
+  const TABS = ["home", "research", "planner", "cet4", "roadmap", "library", "glossary", "graph", "profile", "stats", "settings", "more"];
 
   function navigationButtons() {
     return document.querySelectorAll(".tabs-desktop [data-tab], .tabbar [data-tab], #view-more [data-tab]");
@@ -1279,7 +1327,7 @@
       }
     });
     navigationButtons().forEach(function (btn) {
-      const active = btn.dataset.tab === name || (btn.dataset.tab === "more" && ["research", "roadmap", "library", "glossary", "graph", "stats", "settings"].indexOf(name) !== -1);
+      const active = btn.dataset.tab === name || (btn.dataset.tab === "more" && ["research", "roadmap", "library", "glossary", "graph", "profile", "stats", "settings"].indexOf(name) !== -1);
       btn.classList.toggle("is-active", active);
       btn.setAttribute("aria-selected", active ? "true" : "false");
     });

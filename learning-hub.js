@@ -8,6 +8,8 @@
     planFilter: "today", planSubject: "all",
     planDraft: null, settingsDraft: null, timer: null
   };
+  // 番茄钟默认节奏：专注 25 / 短休 5 / 长休 15，每 4 个番茄一次长休
+  var POMO = { focus: 25, shortBreak: 5, longBreak: 15, cycle: 4 };
   function esc(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function safeSubject(subject) { return subjects[subject] ? subject : "general"; }
   function subjectLabel(subject) { return subjects[safeSubject(subject)]; }
@@ -87,7 +89,37 @@
   }
   function renderTimer() {
     var t = state.timer, selected = Math.round(t.duration / 60);
-    return '<section class="hub-panel hub-focus"><div class="hub-panel-head"><h2>🍅 专注时间口袋</h2><span class="hub-count">每次只做一件事</span></div><div class="hub-timer-face"><span class="hub-timer-digits" data-hub-timer-clock role="timer" aria-label="专注倒计时">' + clockText(remaining()) + '</span><span class="hub-timer-state" data-hub-timer-status>' + (t.running ? '专注中，好好享受这段时间' : t.recorded ? '这次专注已记录，做得好！' : t.remaining < t.duration ? '已经暂停，准备好再继续' : '准备好，给自己一段安静的时间') + '</span></div><div class="hub-timer-controls"><label>专注时长<select id="hubTimerDuration" data-hub-field="timer-duration"' + (t.running || t.remaining < t.duration && !t.recorded ? ' disabled' : '') + '>' + [15, 25, 45, 60].map(function (n) { return '<option value="' + n + '"' + (selected === n ? ' selected' : '') + '>' + n + ' 分钟</option>'; }).join("") + '</select></label><label>学习内容<select id="hubTimerSubject" data-hub-field="timer-subject"' + (t.running || t.remaining < t.duration && !t.recorded ? ' disabled' : '') + '>' + subjectOptions(t.subject) + '</select></label></div><div class="hub-button-row"><button class="hub-btn hub-btn-primary" type="button" data-hub-action="timer-toggle">' + (t.running ? 'Ⅱ 暂停一下' : t.recorded ? '▶ 再专注一次' : '▶ ' + (t.remaining < t.duration ? '继续专注' : '开始专注')) + '</button><button class="hub-btn hub-btn-subtle" type="button" data-hub-action="timer-reset">重置</button></div><p class="hub-caption">完成倒计时会记录学习时长。关闭浏览器后，计时仍按结束时间继续。</p><span class="hub-sr" aria-live="polite" data-hub-timer-announcement></span></section>';
+    var modeLabel = t.mode === 'focus' ? '专注中，好好享受这段时间' : t.mode === 'shortBreak' ? '短休息，起来动一动' : '长休息，好好放松一下';
+    var modeIdle = t.mode === 'focus' ? '准备好，给自己一段安静的时间' : t.mode === 'shortBreak' ? '短暂休息，喝口水' : '该好好休息一下啦';
+    var status = t.running ? modeLabel : t.recorded ? (t.mode === 'focus' ? '这个番茄已记录，做得好！' : '休息已结束') : t.remaining < t.duration ? '已经暂停，准备好再继续' : modeIdle;
+    var modeBadge = t.mode === 'focus' ? '🍅 专注' : t.mode === 'shortBreak' ? '☕ 短休息' : '🌴 长休息';
+    var pomodoroDots = '';
+    for (var i = 0; i < POMO.cycle; i += 1) pomodoroDots += '<span class="hub-pomo-dot' + (i < t.pomodoros % POMO.cycle ? ' is-done' : '') + '" aria-hidden="true"></span>';
+    var refHtml = '';
+    if (t.ref && t.ref.title) refHtml = '<div class="hub-timer-ref"><span>🎯 当前目标</span><strong>' + esc(t.ref.title) + '</strong><button class="hub-text-btn" type="button" data-hub-action="timer-unbind">取消绑定</button></div>';
+    else refHtml = '<div class="hub-timer-ref hub-timer-ref-empty"><span>🎯 绑定一个目标，让专注更聚焦</span><label class="hub-timer-bind"><select id="hubTimerBind" data-hub-field="timer-bind"' + (t.running || t.remaining < t.duration && !t.recorded ? ' disabled' : '') + '>' + bindOptions(t.ref) + '</select></label></div>';
+    var cycleHint = '每完成 ' + POMO.cycle + ' 个番茄自动进入长休息（' + POMO.longBreak + ' 分钟）';
+    return '<section class="hub-panel hub-focus" data-mode="' + t.mode + '"><div class="hub-panel-head"><h2>🍅 番茄专注钟</h2><span class="hub-count">今日 ' + t.pomodoros + ' 个番茄</span></div><div class="hub-timer-mode"><span class="hub-timer-mode-badge">' + modeBadge + '</span><span class="hub-pomo-dots" aria-hidden="true">' + pomodoroDots + '</span></div><div class="hub-timer-face"><span class="hub-timer-digits" data-hub-timer-clock role="timer" aria-label="倒计时">' + clockText(remaining()) + '</span><span class="hub-timer-state" data-hub-timer-status>' + status + '</span></div>' + refHtml + '<div class="hub-timer-controls"><label>专注时长<select id="hubTimerDuration" data-hub-field="timer-duration"' + (t.running || t.remaining < t.duration && !t.recorded ? ' disabled' : '') + '>' + [15, 25, 45, 60].map(function (n) { return '<option value="' + n + '"' + (selected === n ? ' selected' : '') + '>' + n + ' 分钟</option>'; }).join("") + '</select></label><label>学习内容<select id="hubTimerSubject" data-hub-field="timer-subject"' + (t.running || t.remaining < t.duration && !t.recorded ? ' disabled' : '') + '>' + subjectOptions(t.subject) + '</select></label></div><div class="hub-button-row"><button class="hub-btn hub-btn-primary" type="button" data-hub-action="timer-toggle">' + (t.running ? 'Ⅱ 暂停一下' : t.recorded ? '▶ 再来一个' : '▶ ' + (t.remaining < t.duration ? '继续' : '开始专注')) + '</button><button class="hub-btn hub-btn-subtle" type="button" data-hub-action="timer-reset">重置</button><button class="hub-btn hub-btn-subtle" type="button" data-hub-action="timer-skip">跳过</button></div><p class="hub-caption">' + cycleHint + '。完成专注会记录学习时长并计入统计与学习档案。</p><span class="hub-sr" aria-live="polite" data-hub-timer-announcement></span></section>';
+  }
+  function bindOptions(ref) {
+    var html = '<option value="">选择要专注的目标…</option>';
+    var groups = [];
+    var today = bridge.today();
+    if (bridge.plans) {
+      var plans = bridge.plans().filter(function (p) { return p.date === today && !p.done; });
+      if (plans.length) groups.push({ label: '今日计划', items: plans.map(function (p) { return { type: 'plan', key: p.key, title: p.title, value: 'plan:' + p.key }; }) });
+    }
+    if (bridge.roadmapTasks) {
+      var tasks = bridge.roadmapTasks().filter(function (t) { return !t.done; }).slice(0, 8);
+      if (tasks.length) groups.push({ label: 'AI 学习路线', items: tasks.map(function (t) { return { type: 'roadmap', key: t.id, title: t.title, value: 'roadmap:' + t.id }; }) });
+    }
+    groups.push({ label: '四级备考', items: [{ type: 'cet4', key: 'cet4', title: '四级专项练习', value: 'cet4' }] });
+    groups.forEach(function (g) {
+      html += '<optgroup label="' + esc(g.label) + '">';
+      g.items.forEach(function (it) { html += '<option value="' + esc(it.value) + '"' + (ref && ref.key === it.key && ref.type === it.type ? ' selected' : '') + '>' + esc(it.title) + '</option>'; });
+      html += '</optgroup>';
+    });
+    return html;
   }
   function clockText(seconds) { seconds = Math.max(0, Math.ceil(seconds)); return String(Math.floor(seconds / 60)).padStart(2, "0") + ':' + String(seconds % 60).padStart(2, "0"); }
   function renderPlanner(snapshot) {
@@ -105,13 +137,16 @@
     return '<article class="hub-plan-row' + (r.done ? ' is-done' : '') + '"><label class="hub-plan-check"><input type="checkbox" data-hub-plan-toggle="' + esc(r.key) + '" aria-label="完成计划：' + esc(r.title) + '"' + (r.done ? ' checked' : '') + '></label><div class="hub-plan-main"><h3>' + esc(r.title) + '</h3><div class="hub-plan-meta">' + pill(r.subject) + '<span' + (r.date < today && !r.done ? ' class="hub-overdue"' : '') + '>' + (r.date === today ? '今天' : esc(r.date)) + '</span><span>约 ' + esc(r.minutes) + ' 分钟</span></div></div><div class="hub-item-tools"><button type="button" class="hub-icon-btn" data-hub-action="edit-plan" data-key="' + esc(r.key) + '" aria-label="编辑计划：' + esc(r.title) + '" title="编辑">✎</button><button type="button" class="hub-icon-btn hub-danger" data-hub-action="delete-plan" data-key="' + esc(r.key) + '" aria-label="删除计划：' + esc(r.title) + '" title="删除">×</button></div></article>';
   }
   function defaultTimer() {
-    return { duration: 25 * 60, remaining: 25 * 60, subject: "ai", running: false, recorded: false, id: "", endAt: 0 };
+    // mode: "focus" | "shortBreak" | "longBreak"
+    // pomodoros: 今天已完成的番茄数（跨会话统计，不随 reset 清零）
+    // ref: 绑定的目标 { type: "plan"|"roadmap"|"cet4", key, title }
+    return { duration: POMO.focus * 60, remaining: POMO.focus * 60, subject: "ai", running: false, recorded: false, id: "", endAt: 0, mode: "focus", pomodoros: 0, ref: null };
   }
   function restoreTimer() {
     var timer = defaultTimer();
     try {
       var saved = JSON.parse(sessionStorage.getItem('study-hub-focus-v1') || 'null');
-      if (saved && Number.isFinite(saved.duration) && saved.duration >= 60 && saved.duration <= 7200 && Number.isFinite(saved.remaining) && saved.remaining >= 0 && saved.remaining <= saved.duration && (!saved.running || typeof saved.id === 'string' && saved.id && Number.isFinite(saved.endAt) && saved.endAt > 0)) timer = Object.assign(timer, saved, { subject: safeSubject(saved.subject) });
+      if (saved && Number.isFinite(saved.duration) && saved.duration >= 60 && saved.duration <= 7200 && Number.isFinite(saved.remaining) && saved.remaining >= 0 && saved.remaining <= saved.duration && (!saved.running || typeof saved.id === 'string' && saved.id && Number.isFinite(saved.endAt) && saved.endAt > 0)) timer = Object.assign(timer, saved, { subject: safeSubject(saved.subject), mode: saved.mode === 'shortBreak' || saved.mode === 'longBreak' ? saved.mode : 'focus', pomodoros: Number.isFinite(saved.pomodoros) ? Math.max(0, saved.pomodoros) : 0, ref: saved.ref && typeof saved.ref === 'object' ? saved.ref : null });
     } catch (error) { /* Session storage may be blocked; the in-memory clock still works. */ }
     return timer;
   }
@@ -126,16 +161,44 @@
     var t = state.timer;
     if (t.recorded) return;
     t.remaining = 0; t.running = false; t.recorded = true;
-    var key = 'focus:' + t.id, endDate = new Date(t.endAt || Date.now()), date = [endDate.getFullYear(), String(endDate.getMonth() + 1).padStart(2, '0'), String(endDate.getDate()).padStart(2, '0')].join('-');
-    saveTimer();
-    if (!((read().study || {})[key])) bridge.put(key, { date: date, subject: t.subject, minutes: t.duration / 60, title: subjectLabel(t.subject) + '专注', completed: true });
-    render(); bridge.toast('完成 ' + t.duration / 60 + ' 分钟专注，已记录！');
-    var announcement = document.querySelector('[data-hub-timer-announcement]'); if (announcement) announcement.textContent = '本次专注结束，学习时长已记录。';
+    var endDate = new Date(t.endAt || Date.now()), date = [endDate.getFullYear(), String(endDate.getMonth() + 1).padStart(2, '0'), String(endDate.getDate()).padStart(2, '0')].join('-');
+    if (t.mode === 'focus') {
+      t.pomodoros += 1;
+      var key = 'focus:' + t.id;
+      saveTimer();
+      var fields = { date: date, subject: t.subject, minutes: t.duration / 60, title: subjectLabel(t.subject) + '专注', completed: true };
+      if (t.ref) fields.ref = t.ref;
+      if (!((read().study || {})[key])) bridge.put(key, fields);
+      // 联动：绑定计划时自动标记完成
+      if (t.ref && t.ref.type === 'plan' && t.ref.key && !getRecord(t.ref.key)) bridge.put(t.ref.key, { done: true, title: t.ref.title, date: t.ref.date, subject: t.subject });
+      render();
+      var next = nextMode('focus');
+      bridge.toast('🍅 完成 1 个番茄，已记录！' + (next.mode !== 'focus' ? ' 该休息一下啦～' : ''));
+      var announcement = document.querySelector('[data-hub-timer-announcement]'); if (announcement) announcement.textContent = '本次专注结束，学习时长已记录。';
+    } else {
+      saveTimer();
+      render();
+      bridge.toast('休息结束，准备好开始下一个番茄了吗？');
+      var ann2 = document.querySelector('[data-hub-timer-announcement]'); if (ann2) ann2.textContent = '休息结束，可以开始新的专注了。';
+    }
+  }
+  function nextMode(current) {
+    var t = state.timer;
+    if (current === 'focus') {
+      return { mode: t.pomodoros % POMO.cycle === 0 ? 'longBreak' : 'shortBreak', minutes: t.pomodoros % POMO.cycle === 0 ? POMO.longBreak : POMO.shortBreak };
+    }
+    return { mode: 'focus', minutes: Math.round(t.duration / 60) };
+  }
+  function startMode(mode) {
+    var t = state.timer;
+    var mins = mode.mode === 'focus' ? Math.round(t.duration / 60) : mode.minutes;
+    t.mode = mode.mode; t.duration = mins * 60; t.remaining = mins * 60; t.recorded = false; t.id = ''; t.running = false; t.endAt = 0;
+    saveTimer(); render();
   }
   function setTimer(field, value) {
     if (state.timer.running || state.timer.remaining < state.timer.duration && !state.timer.recorded) return;
     if (field === 'duration') { state.timer.duration = clamp(value, 1, 120) * 60; state.timer.remaining = state.timer.duration; state.timer.recorded = false; }
-    else state.timer.subject = safeSubject(value);
+    else if (field === 'subject') state.timer.subject = safeSubject(value);
     saveTimer(); render();
   }
   function toggleTimer() {
@@ -145,8 +208,8 @@
     saveTimer(); render();
   }
   function resetTimer() {
-    if ((state.timer.running || state.timer.remaining < state.timer.duration && !state.timer.recorded) && !window.confirm('重置会放弃本次尚未完成的专注计时，确定重置吗？')) return;
-    state.timer = Object.assign(defaultTimer(), { duration: state.timer.duration, remaining: state.timer.duration, subject: state.timer.subject }); saveTimer(); render();
+    if ((state.timer.running || state.timer.remaining < state.timer.duration && !state.timer.recorded) && !window.confirm('重置会放弃本次尚未完成的计时，确定重置吗？')) return;
+    state.timer = Object.assign(defaultTimer(), { duration: state.timer.duration, remaining: state.timer.duration, subject: state.timer.subject, mode: state.timer.mode, pomodoros: state.timer.pomodoros, ref: state.timer.ref }); saveTimer(); render();
   }
   function preserveFocus() {
     var node = document.activeElement;
@@ -186,6 +249,13 @@
     else if (action === 'delete-plan') { if (window.confirm('确定删除这项计划吗？')) { if (state.planDraft.key === key) state.planDraft = newPlan(); bridge.remove(key); bridge.toast('计划已删除'); } }
     else if (action === 'timer-toggle') toggleTimer();
     else if (action === 'timer-reset') resetTimer();
+    else if (action === 'timer-skip') { if (state.timer.running || state.timer.remaining < state.timer.duration && !state.timer.recorded) { if (!window.confirm('跳过会放弃本次尚未完成的计时，确定跳过吗？')) return; } startMode(nextMode(state.timer.mode)); bridge.toast(state.timer.mode === 'focus' ? '回到专注时间' : '进入休息时间'); }
+    else if (action === 'timer-bind') {
+      var bindKey = target.dataset.bindKey, bindType = target.dataset.bindType, bindTitle = target.dataset.bindTitle;
+      state.timer.ref = { type: bindType, key: bindKey, title: bindTitle };
+      saveTimer(); render(); bridge.toast('已绑定目标：' + bindTitle);
+    }
+    else if (action === 'timer-unbind') { state.timer.ref = null; saveTimer(); render(); }
   }
   function onSubmit(event) {
     var form = event.target.closest('[data-hub-form]'); if (!form) return;
@@ -211,6 +281,12 @@
       if (target.dataset.hubPlanToggle) { var key = target.dataset.hubPlanToggle, record = getRecord(key); if (record) bridge.put(key, { done: target.checked }); }
       else if (target.dataset.hubField === 'timer-duration') setTimer('duration', target.value);
       else if (target.dataset.hubField === 'timer-subject') setTimer('subject', target.value);
+      else if (target.dataset.hubField === 'timer-bind') {
+        var v = target.value; if (!v) { state.timer.ref = null; saveTimer(); render(); return; }
+        var parts = v.split(':'), type = parts[0], bindKey = v.slice(type.length + 1), opt = target.querySelector('option:checked');
+        state.timer.ref = { type: type, key: bindKey, title: opt ? opt.textContent : bindKey };
+        saveTimer(); render();
+      }
       else captureField(target);
     });
     document.addEventListener('submit', onSubmit);

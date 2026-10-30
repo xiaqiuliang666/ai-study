@@ -1,0 +1,58 @@
+/* 个人学习档案 */
+.pf-app { max-width: 1080px; margin: 0 auto; }
+.pf-hero { padding: 26px 4px 20px; }
+.pf-eyebrow { display: block; font-size: 11px; letter-spacing: .14em; color: var(--accent); font-weight: 800; text-transform: uppercase; }
+.pf-hero h1 { margin: 8px 0 6px; font-size: clamp(24px, 3vw, 32px); font-weight: 850; }
+.pf-hero p { color: var(--text-2); font-size: 14px; margin: 0; }
+
+.pf-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+.pf-stat { display: flex; align-items: center; gap: 11px; padding: 15px 14px; border: 2px solid var(--border); border-radius: 18px; background: var(--surface); box-shadow: 0 4px 0 var(--cartoon-shadow); }
+.pf-stat-icon { flex: none; display: flex; align-items: center; justify-content: center; width: 42px; height: 44px; font-size: 24px; border-radius: 14px; background: var(--surface-2); }
+.pf-stat strong { display: block; font-size: 22px; font-weight: 850; line-height: 1.2; white-space: nowrap; }
+.pf-stat strong small { font-size: 11px; font-weight: 650; color: var(--text-2); }
+.pf-stat div > span { display: block; margin-top: 3px; font-size: 10px; color: var(--text-3); }
+
+.pf-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.pf-card { padding: 20px; border: 2px solid var(--border); border-radius: 22px; background: var(--surface); box-shadow: 0 4px 0 var(--cartoon-shadow); margin-bottom: 16px; }
+.pf-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; }
+.pf-card-head h2 { font-size: 16px; line-height: 1.4; }
+.pf-count { font-size: 11px; color: var(--text-3); font-weight: 700; }
+
+.pf-subject { margin-bottom: 14px; }
+.pf-subject:last-child { margin-bottom: 0; }
+.pf-subject-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; font-size: 13px; font-weight: 700; }
+.pf-subject-head strong { color: var(--text-2); font-size: 12px; }
+.pf-bar { height: 12px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+.pf-bar i { display: block; height: 100%; border-radius: 999px; transition: width .4s ease; }
+
+.pf-days { display: grid; grid-template-columns: repeat(14, 1fr); gap: 5px; }
+.pf-day { display: flex; align-items: center; justify-content: center; height: 34px; border-radius: 9px; background: var(--surface-2); border: 2px solid var(--border); font-size: 10px; color: var(--text-3); }
+.pf-day.is-active { background: #e0f4ff; border-color: #9fd4ef; color: #0b6ea8; font-weight: 800; }
+
+.pf-activity { margin: 0; padding: 0; list-style: none; }
+.pf-activity li { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px dashed var(--border); }
+.pf-activity li:last-child { border-bottom: 0; }
+.pf-act-icon { flex: none; display: flex; align-items: center; justify-content: center; width: 38px; height: 40px; font-size: 21px; background: var(--surface-2); border-radius: 12px; }
+.pf-activity li > div { min-width: 0; flex: 1; }
+.pf-activity strong { display: block; font-size: 12px; font-weight: 750; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-activity li div > span { display: block; margin-top: 3px; font-size: 10px; color: var(--text-3); }
+.pf-empty { color: var(--text-3); font-size: 12px; margin: 6px 0; }
+
+.pf-reflect-form { margin-bottom: 16px; }
+.pf-reflect-form textarea { width: 100%; min-height: 80px; padding: 11px 13px; border: 2px solid var(--border); border-radius: 13px; background: var(--surface-2); color: var(--text); font-size: 13px; line-height: 1.6; resize: vertical; }
+.pf-reflect-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.pf-mood select { min-height: 40px; padding: 8px 12px; border: 2px solid var(--border); border-radius: 11px; background: var(--surface-2); color: var(--text); font-size: 13px; }
+.pf-reflect-list { display: grid; gap: 10px; }
+.pf-reflect { padding: 13px 15px; border: 2px solid var(--border); border-radius: 15px; background: var(--surface-2); }
+.pf-reflect-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11px; color: var(--text-3); }
+.pf-reflect p { margin: 0; font-size: 13px; line-height: 1.6; white-space: pre-wrap; }
+
+@media (max-width: 900px) {
+  .pf-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pf-two-col { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 500px) {
+  .pf-stat { padding: 12px 10px; gap: 8px; }
+  .pf-stat-icon { width: 34px; height: 36px; font-size: 20px; }
+  .pf-stat strong { font-size: 18px; }
+}
