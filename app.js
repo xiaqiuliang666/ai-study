@@ -1,4 +1,4 @@
-/* AI 学习路线 · 前端逻辑（无依赖，纯浏览器 JS） */
+﻿/* AI 学习路线 · 前端逻辑（无依赖，纯浏览器 JS） */
 (function () {
   "use strict";
 
@@ -163,7 +163,6 @@
       query: "",
       open: {},
       openNotes: {},
-      editingLogId: null,
       gCat: "all",
       gQuery: "",
       gOpen: {},
@@ -186,7 +185,6 @@
         query: ui.query,
         open: ui.open,
         openNotes: ui.openNotes,
-        editingLogId: ui.editingLogId,
         gCat: ui.gCat,
         gQuery: ui.gQuery,
         gOpen: ui.gOpen,
@@ -214,13 +212,6 @@
 
   function remainingMinutes() {
     return CORE_TASKS.reduce(function (sum, t) { return sum + (isDone(t.id) ? 0 : (t.minutes || 0)); }, 0);
-  }
-
-  function sortedLog() {
-    return state.log.slice().sort(function (a, b) {
-      if (a.date === b.date) return String(b.updatedAt || "").localeCompare(String(a.updatedAt || ""));
-      return String(b.date).localeCompare(String(a.date));
-    });
   }
 
   function dateFromStamp(stamp) {
@@ -255,9 +246,6 @@
       const entry = state.tasks[t.id];
       if (entry && entry.done && entry.doneAt === date) n += 1;
     });
-    state.log.forEach(function (item) {
-      if (item.date === date) n += 1;
-    });
     studyActivities().forEach(function (item) { if (item.date === date) n += 1; });
     return n;
   }
@@ -268,15 +256,12 @@
       const entry = state.tasks[t.id];
       if (entry && entry.done && entry.doneAt) set[entry.doneAt] = true;
     });
-    state.log.forEach(function (item) {
-      if (item.date) set[item.date] = true;
-    });
     studyActivities().forEach(function (item) { set[item.date] = true; });
     return Object.keys(set).sort();
   }
 
   function totalLoggedMinutes() {
-    return state.log.reduce(function (sum, item) { return sum + (Number(item.minutes) || 0); }, 0) + studyActivities().reduce(function (sum, item) { return sum + item.minutes; }, 0);
+    return studyActivities().reduce(function (sum, item) { return sum + item.minutes; }, 0);
   }
 
   function computeStreak() {
@@ -1028,31 +1013,6 @@
   }
 
   /* ---------- 渲染：日志 ---------- */
-  function renderLogs() {
-    const host = $("logList");
-    const items = sortedLog();
-    $("logCount").textContent = items.length ? items.length + " 条" : "";
-
-    if (!items.length) {
-      host.innerHTML = '<div class="empty">还没有日志。今天学了什么？写一句就行。</div>';
-      return;
-    }
-
-    let html = "";
-    items.forEach(function (item) {
-      html += '<article class="card log-item">';
-      html += '<div class="log-item-head">';
-      html += '<span class="log-date">' + esc(item.date) + (item.minutes ? " · " + esc(formatMinutes(item.minutes)) : "") + "</span>";
-      html += '<span class="log-tools">';
-      html += '<button class="mini-btn" type="button" data-edit-log="' + esc(item.id) + '">编辑</button>';
-      html += '<button class="mini-btn is-danger" type="button" data-delete-log="' + esc(item.id) + '">删除</button>';
-      html += "</span></div>";
-      html += '<h3 class="log-title">' + esc(item.title) + "</h3>";
-      if (item.content) html += '<p class="log-content">' + esc(item.content) + "</p>";
-      html += "</article>";
-    });
-    host.innerHTML = html;
-  }
 
   /* ---------- 渲染：统计 ---------- */
   function renderStats() {
@@ -1067,7 +1027,7 @@
     $("statStreak").textContent = streak.current;
     $("statStreakBest").textContent = streak.best;
     $("statHours").textContent = Math.round(totalLoggedMinutes() / 60);
-    $("statLogCount").textContent = "日志 + 专注 + 专项练习";
+    $("statLogCount").textContent = "专注 + 专项练习";
     $("statDays").textContent = dates.length;
     $("statStart").textContent = state.profile.start ? "开始于 " + shortDate(state.profile.start) : "还没设置开始日期";
 
@@ -1104,7 +1064,7 @@
       html += "</div>";
     });
     html += "</div>";
-    html += '<p class="muted small" style="margin-top:10px">包含任务、打卡、笔记、复习与练习等学习活动，最高 ' + max + " 项。</p>";
+    html += '<p class="muted small" style="margin-top:10px">包含任务、打卡、复习与练习等学习活动，最高 ' + max + " 项。</p>";
     $("activityChart").innerHTML = html;
   }
 
@@ -1116,15 +1076,12 @@
         events.push({ date: entry.doneAt, sort: entry.doneAt + (entry.updatedAt || ""), text: "完成任务：" + task.title });
       }
     });
-    state.log.forEach(function (item) {
-      events.push({ date: item.date, sort: item.date + (item.updatedAt || ""), text: "学习日志：" + item.title });
-    });
     studyActivities().forEach(function (item) { events.push({ date: item.date, sort: item.date + item.sort, text: item.title }); });
     events.sort(function (a, b) { return String(b.sort).localeCompare(String(a.sort)); });
 
     const host = $("timeline");
     if (!events.length) {
-      host.innerHTML = '<div class="empty">完成任务或写日志后，这里会按时间倒序列出你的记录。</div>';
+      host.innerHTML = '<div class="empty">完成任务后，这里会按时间倒序列出你的记录。</div>';
       return;
     }
     let html = "";
@@ -1148,7 +1105,7 @@
     $("profileName").value = state.profile.name || "";
     $("profileStart").value = state.profile.start || "";
     renderSyncPanel();
-    const itemCount = state.log.length + doneCount() + Object.keys(state.study).filter(function (key) { return !state.study[key].deleted; }).length;
+    const itemCount = doneCount() + Object.keys(state.study).filter(function (key) { return !state.study[key].deleted; }).length;
     $("aboutLine").textContent = "学习任意门 · AI 路线 " + ALL_TASKS.length + " 个任务 · 学术研究 / 文献与知识资料 / 英语四级 / 计划专注 · 热词 " +
       GL.terms.length + " 条 · 模型图谱 " + MG.items.length + " 条 · 已保存 " + itemCount + " 项记录";
   }
@@ -1191,7 +1148,6 @@
     renderPhases();
     renderGlossary();
     renderGraph();
-    renderLogs();
     renderStats();
     renderSettings();
     studyModules().forEach(function (module) { module.render(); });
@@ -1228,51 +1184,6 @@
         }, 700);
   }
 
-  /* ---------- 日志操作 ---------- */
-  function upsertLog(item) {
-    const index = state.log.findIndex(function (x) { return x.id === item.id; });
-    if (index === -1) {
-      state.log.push(item);
-    } else {
-      state.log[index] = item;
-    }
-    markChanged();
-    renderAll();
-  }
-
-  function deleteLog(id) {
-    const item = state.log.find(function (x) { return x.id === id; });
-    if (!item) return;
-    if (!window.confirm("删除这条日志？\n\n" + item.date + " " + item.title)) return;
-    state.log = state.log.filter(function (x) { return x.id !== id; });
-    state.logDeleted[id] = nowISO();
-    markChanged();
-    renderAll();
-  }
-
-  function resetLogForm() {
-    ui.editingLogId = null;
-    $("logForm").reset();
-    $("logDate").value = todayISO();
-    $("logSubmit").textContent = "保存日志";
-    $("logCancel").hidden = true;
-    saveUI();
-  }
-
-  function editLog(id) {
-    const item = state.log.find(function (x) { return x.id === id; });
-    if (!item) return;
-    ui.editingLogId = id;
-    $("logDate").value = item.date || todayISO();
-    $("logMinutes").value = item.minutes || "";
-    $("logTitle").value = item.title || "";
-    $("logContent").value = item.content || "";
-    $("logSubmit").textContent = "保存修改";
-    $("logCancel").hidden = false;
-    saveUI();
-    switchTab("log");
-    $("logTitle").focus();
-  }
 
   /* ---------- 导入导出 ---------- */
   function exportJSON() {
@@ -1316,7 +1227,7 @@
   }
 
   async function resetAll() {
-    if (!window.confirm("确定清空任务进度、打卡、计划、笔记、四级练习和日志？已连接同步时，会同步清空当前云端记录。学习档案会保留。")) return;
+    if (!window.confirm("确定清空任务进度、打卡、计划、四级练习？已连接同步时，会同步清空当前云端记录。学习档案会保留。")) return;
     if (!window.confirm("再确认一次：此操作不可撤销。建议先导出 JSON 备份。真的清空吗？")) return;
     if (sync.busy) { showToast("正在同步，请稍后再清空"); return; }
     if (sync.mode !== "off") {
@@ -1342,16 +1253,14 @@
     previous.log.forEach(function (item) { state.logDeleted[item.id] = stamp; });
     Object.keys(previous.study).forEach(function (key) { state.study[key] = { deleted: true, updatedAt: stamp }; });
     ui.openNotes = {};
-    ui.editingLogId = null;
     studyModules().forEach(function (module) { if (typeof module.reset === "function") module.reset(); });
     markChanged();
     renderAll();
-    resetLogForm();
     showToast("已清空，重新开始");
   }
 
   /* ---------- 标签页 ---------- */
-  const TABS = ["home", "research", "planner", "cet4", "roadmap", "library", "notes", "glossary", "graph", "log", "stats", "settings", "more"];
+  const TABS = ["home", "research", "planner", "cet4", "roadmap", "library", "glossary", "graph", "stats", "settings", "more"];
 
   function navigationButtons() {
     return document.querySelectorAll(".tabs-desktop [data-tab], .tabbar [data-tab], #view-more [data-tab]");
@@ -1370,7 +1279,7 @@
       }
     });
     navigationButtons().forEach(function (btn) {
-      const active = btn.dataset.tab === name || (btn.dataset.tab === "more" && ["research", "roadmap", "library", "glossary", "graph", "log", "stats", "settings"].indexOf(name) !== -1);
+      const active = btn.dataset.tab === name || (btn.dataset.tab === "more" && ["research", "roadmap", "library", "glossary", "graph", "stats", "settings"].indexOf(name) !== -1);
       btn.classList.toggle("is-active", active);
       btn.setAttribute("aria-selected", active ? "true" : "false");
     });
@@ -1515,32 +1424,6 @@
       scheduleSync();
     });
 
-    $("logForm").addEventListener("submit", function (event) {
-      event.preventDefault();
-      const title = $("logTitle").value.trim();
-      if (!title) return;
-      const existing = ui.editingLogId ? state.log.find(function (x) { return x.id === ui.editingLogId; }) : null;
-      upsertLog({
-        id: existing ? existing.id : uid(),
-        date: $("logDate").value || todayISO(),
-        title: title,
-        content: $("logContent").value.trim(),
-        minutes: Number($("logMinutes").value) || 0,
-        updatedAt: nowISO()
-      });
-      resetLogForm();
-      showToast(existing ? "日志已更新" : "日志已保存");
-    });
-
-    $("logCancel").addEventListener("click", function () { resetLogForm(); });
-
-    $("logList").addEventListener("click", function (event) {
-      const edit = event.target.closest("[data-edit-log]");
-      if (edit) { editLog(edit.dataset.editLog); return; }
-      const del = event.target.closest("[data-delete-log]");
-      if (del) deleteLog(del.dataset.deleteLog);
-    });
-
     $("profileForm").addEventListener("submit", function (event) {
       event.preventDefault();
       state.profile.name = $("profileName").value.trim();
@@ -1641,7 +1524,6 @@
   /* ---------- 启动 ---------- */
   function boot() {
     initTheme();
-    $("logDate").value = todayISO();
     if (!state.profile.start) state.profile.start = todayISO();
 
     $("searchInput").value = ui.query || "";

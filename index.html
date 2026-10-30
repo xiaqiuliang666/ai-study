@@ -12,12 +12,12 @@
 <link rel="apple-touch-icon" href="icon.svg">
 <title>学习任意门 · 学术研究 / AI / 四级</title>
 <link rel="preload" as="image" href="assets/doraemon-sky.jpg">
-<link rel="stylesheet" href="styles.css?v=cartoon-1">
-<link rel="stylesheet" href="cartoon.css?v=hub-1">
-<link rel="stylesheet" href="hub.css?v=hub-1">
-<link rel="stylesheet" href="cet4.css?v=hub-1">
-<link rel="stylesheet" href="knowledge.css?v=resources-1">
-<link rel="stylesheet" href="research.css?v=academic-1">
+<link rel="stylesheet" href="styles.css?v=cartoon-2">
+<link rel="stylesheet" href="cartoon.css?v=hub-2">
+<link rel="stylesheet" href="hub.css?v=hub-2">
+<link rel="stylesheet" href="cet4.css?v=hub-2">
+<link rel="stylesheet" href="knowledge.css?v=resources-2">
+<link rel="stylesheet" href="research.css?v=academic-2">
 </head>
 <body>
 
@@ -47,10 +47,8 @@
     <button class="tab" type="button" role="tab" data-tab="library" aria-controls="view-library" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🔬</span>知识与科研资料</button>
     <button class="tab" type="button" role="tab" data-tab="cet4" aria-controls="view-cet4" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🇬🇧</span>四级备考</button>
     <button class="tab" type="button" role="tab" data-tab="roadmap" aria-controls="view-roadmap" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🧭</span>AI 学习路线</button>
-    <button class="tab" type="button" role="tab" data-tab="notes" aria-controls="view-notes" aria-selected="false"><span class="nav-symbol" aria-hidden="true">📒</span>笔记与错题</button>
     <button class="tab" type="button" role="tab" data-tab="glossary" aria-controls="view-glossary" aria-selected="false"><span class="nav-symbol" aria-hidden="true">📚</span>热词百科</button>
     <button class="tab" type="button" role="tab" data-tab="graph" aria-controls="view-graph" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🤖</span>模型图谱</button>
-    <button class="tab" type="button" role="tab" data-tab="log" aria-controls="view-log" aria-selected="false"><span class="nav-symbol" aria-hidden="true">✏️</span>学习日志</button>
     <button class="tab" type="button" role="tab" data-tab="stats" aria-controls="view-stats" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🏆</span>学习成就</button>
     <button class="tab" type="button" role="tab" data-tab="settings" aria-controls="view-settings" aria-selected="false"><span class="nav-symbol" aria-hidden="true">🛠️</span>我的设置</button>
   </nav>
@@ -67,7 +65,6 @@
   <section id="view-home" class="view" role="tabpanel"><div id="hubHome"></div></section>
   <section id="view-planner" class="view" role="tabpanel" hidden><div id="hubPlanner"></div></section>
   <section id="view-cet4" class="view" role="tabpanel" hidden><div id="cet4Mount"></div></section>
-  <section id="view-notes" class="view" role="tabpanel" hidden><div id="hubNotes"></div></section>
   <section id="view-library" class="view" role="tabpanel" hidden><div id="knowledgeMount"></div></section>
   <section id="view-research" class="view" role="tabpanel" hidden><div id="researchMount"></div></section>
 
@@ -79,7 +76,6 @@
       <button class="tool-card" type="button" data-tab="roadmap"><span aria-hidden="true">🧭</span><strong>AI 学习路线</strong><small>Git、文献、Python 与 Agent 项目</small></button>
       <button class="tool-card" type="button" data-tab="glossary"><span aria-hidden="true">📚</span><strong>AI 热词百科</strong><small>概念解释、区别与关联词</small></button>
       <button class="tool-card" type="button" data-tab="graph"><span aria-hidden="true">🤖</span><strong>模型与 Agent 图谱</strong><small>查找适合任务的工具</small></button>
-      <button class="tool-card" type="button" data-tab="log"><span aria-hidden="true">✏️</span><strong>学习日志</strong><small>记录每天学了什么、用了多久</small></button>
       <button class="tool-card" type="button" data-tab="stats"><span aria-hidden="true">🏆</span><strong>学习成就与统计</strong><small>连续学习、投入与活动记录</small></button>
       <button class="tool-card" type="button" data-tab="settings"><span aria-hidden="true">🛠️</span><strong>同步与备份</strong><small>连接 Gist、导出和恢复数据</small></button>
     </div>
@@ -168,41 +164,6 @@
       <span class="muted small">权威数据看这里</span>
     </div>
     <div id="graphLive" class="live-list"></div>
-  </section>
-
-  <!-- ==================== 学习日志 ==================== -->
-  <section id="view-log" class="view" role="tabpanel" hidden>
-    <form id="logForm" class="card form">
-      <h2 class="card-title">写一条学习日志</h2>
-      <div class="field-row">
-        <label class="field">
-          <span>日期</span>
-          <input id="logDate" type="date" required>
-        </label>
-        <label class="field">
-          <span>用时（分钟）</span>
-          <input id="logMinutes" type="number" min="0" max="1440" step="5" placeholder="60">
-        </label>
-      </div>
-      <label class="field">
-        <span>今天学了什么</span>
-        <input id="logTitle" type="text" maxlength="60" placeholder="例：看完线性代数第 3 讲，搞懂矩阵乘法" required>
-      </label>
-      <label class="field">
-        <span>细节 / 疑问 / 明天要做的</span>
-        <textarea id="logContent" rows="3" placeholder="例：矩阵乘法不满足交换律；明天想用 numpy 验证一遍。"></textarea>
-      </label>
-      <div class="form-actions">
-        <button class="btn btn-primary" type="submit" id="logSubmit">保存日志</button>
-        <button class="btn" type="button" id="logCancel" hidden>取消编辑</button>
-      </div>
-    </form>
-
-    <div class="section-head">
-      <h2>历史日志</h2>
-      <span class="muted small" id="logCount"></span>
-    </div>
-    <div id="logList" class="log-list"></div>
   </section>
 
   <!-- ==================== 统计 ==================== -->
@@ -347,10 +308,6 @@
     <span class="mobile-symbol" aria-hidden="true">📅</span>
     <span>计划</span>
   </button>
-  <button class="tabbar-btn" type="button" role="tab" data-tab="notes" aria-controls="view-notes" aria-selected="false">
-    <span class="mobile-symbol" aria-hidden="true">📒</span>
-    <span>笔记</span>
-  </button>
   <button class="tabbar-btn" type="button" role="tab" data-tab="more" aria-controls="view-more" aria-selected="false">
     <span class="mobile-symbol" aria-hidden="true">🧰</span>
     <span>更多</span>
@@ -362,16 +319,16 @@
 <script src="curriculum.js"></script>
 <script src="glossary.js"></script>
 <script src="models.js"></script>
-<script src="cet4-content.js?v=resources-1"></script>
-<script src="learning-hub.js?v=academic-1"></script>
-<script src="cet4.js?v=resources-1"></script>
-<script src="knowledge-graduate.js?v=resources-1"></script>
-<script src="knowledge-foundations.js?v=resources-1"></script>
-<script src="knowledge-agent.js?v=resources-1"></script>
-<script src="knowledge-english.js?v=resources-1"></script>
-<script src="knowledge.js?v=resources-1"></script>
-<script src="research-content.js?v=academic-1"></script>
-<script src="research.js?v=academic-1"></script>
-<script src="app.js?v=academic-1"></script>
+<script src="cet4-content.js?v=resources-2"></script>
+<script src="learning-hub.js?v=academic-2"></script>
+<script src="cet4.js?v=resources-2"></script>
+<script src="knowledge-graduate.js?v=resources-2"></script>
+<script src="knowledge-foundations.js?v=resources-2"></script>
+<script src="knowledge-agent.js?v=resources-2"></script>
+<script src="knowledge-english.js?v=resources-2"></script>
+<script src="knowledge.js?v=resources-2"></script>
+<script src="research-content.js?v=academic-2"></script>
+<script src="research.js?v=academic-2"></script>
+<script src="app.js?v=academic-2"></script>
 </body>
 </html>

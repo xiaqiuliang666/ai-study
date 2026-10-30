@@ -144,7 +144,7 @@
     ] },
     { id: "review", icon: "🚀", title: "第三站 · 限时与复盘", subtitle: "按照自己的考试日期安排最后阶段", tasks: [
       { id: "mock-timed", title: "按正式时长完成一次模拟", detail: "笔试总时长 125 分钟；参考官方说明与准考证安排完成练习。", target: "practice", practice: "mock" },
-      { id: "mistake-review", title: "整理三类反复出现的错误", detail: "把错因写进学习记录，并安排下一次复习。", target: "notes" },
+      { id: "mistake-review", title: "整理三类反复出现的错误", detail: "把错因写进学习记录，并安排下一次复习。", target: "practice" },
       { id: "write-toolkit", title: "准备自己的表达口袋", detail: "积累能灵活使用的开头、转折、举例和结尾，不机械套用整篇模板。", target: "practice", practice: "writing" },
       { id: "exam-ready", title: "核对考试通知与证件要求", detail: "以教育考试院和学校通知为准，确认报名、准考证及考试用品。", target: "resources" }
     ] }

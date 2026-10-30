@@ -97,7 +97,7 @@
     } else if (action === 'note' && a) {
       var noteKey = 'note:knowledge-' + a.id;
       if (!record(noteKey).title) bridge.put(noteKey, { title: a.title + ' · 学习笔记', content: '我的理解：\n\n关键证据 / 例子：\n\n动手练习：' + (a.exercise ? a.exercise.task : '') + '\n\n我的解法：\n\n还没想明白的问题：\n', subject: studySubject(a.subject), type: 'note', sourceId: a.id });
-      bridge.navigate('notes'); bridge.toast('学习笔记已放入笔记本，可在记录列表中编辑');
+      bridge.toast('学习笔记已保存');
     }
   }
   function field(target) {
