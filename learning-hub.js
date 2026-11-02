@@ -169,8 +169,9 @@
       var fields = { date: date, subject: t.subject, minutes: t.duration / 60, title: subjectLabel(t.subject) + '专注', completed: true };
       if (t.ref) fields.ref = t.ref;
       if (!((read().study || {})[key])) bridge.put(key, fields);
-      // 联动：绑定计划时自动标记完成
-      if (t.ref && t.ref.type === 'plan' && t.ref.key && !getRecord(t.ref.key)) bridge.put(t.ref.key, { done: true, title: t.ref.title, date: t.ref.date, subject: t.subject });
+      // 联动：绑定计划时自动标记完成（计划已存在且未完成时才标记）
+      var boundPlan = t.ref && t.ref.type === 'plan' && t.ref.key ? getRecord(t.ref.key) : null;
+      if (boundPlan && !boundPlan.done) bridge.put(t.ref.key, { done: true });
       render();
       var next = nextMode('focus');
       bridge.toast('🍅 完成 1 个番茄，已记录！' + (next.mode !== 'focus' ? ' 该休息一下啦～' : ''));

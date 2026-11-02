@@ -1589,11 +1589,19 @@
     renderAll();
 
     window.addEventListener("beforeunload", function () { saveLocalState(); });
+    // 跨天自动刷新：页面一直开着时，日期变化要重渲染（打卡日历、连续天数、倒计时都依赖"今天"）
+    let shownDay = todayISO();
+    const rollDay = function () {
+      const now = todayISO();
+      if (now !== shownDay) { shownDay = now; renderAll(); }
+    };
+
     document.addEventListener("visibilitychange", function () {
       if (document.visibilityState === "hidden") {
         saveLocalState();
         return;
       }
+      rollDay();
       // 从别的设备切回来时顺手拉一次，免得看到旧数据
       if (sync.mode !== "off" && Date.now() - sync.lastPullAt > 20000 && !isEditingField()) {
         syncOnce("visible", false);
@@ -1602,6 +1610,7 @@
 
     if (typeof window.setInterval === "function") {
       window.setInterval(function () {
+        rollDay();
         if (document.hidden || sync.mode === "off" || sync.busy || isEditingField()) return;
         if (Date.now() - sync.lastPullAt >= 25000) syncOnce("poll", false);
       }, 30000);
